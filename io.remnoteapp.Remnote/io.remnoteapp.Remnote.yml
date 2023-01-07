@@ -1,0 +1,54 @@
+app-id: io.remnoteapp.Remnote
+runtime: org.freedesktop.Platform
+runtime-version: "21.08"
+sdk: org.freedesktop.Sdk
+branch: stable
+tags:
+  - proprietary
+base: org.electronjs.Electron2.BaseApp
+base-version: "21.08"
+command: run.sh
+build-options:
+  no-debuginfo: true
+separate-locales: false
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=x11
+  - --socket=pulseaudio
+  - --socket=session-bus
+  - --socket=system-bus
+modules:
+  - name: binance
+    buildsystem: simple
+    sources:
+      - type: file
+        only-arches:
+          - x86_64
+        url: https://download.remnote.io/remnote-desktop/RemNote-1.8.65.AppImage
+        sha256: c3d0e344fb7e970e8121e3772e8097cf7f52279642276059b7275466562d4198
+        dest_filename: RemNote.AppImage
+      # Wrapper to launch the app
+      - type: script
+        dest-filename: run.sh
+        commands:
+          - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
+          - exec zypak-wrapper /app/remnote/remnote "$@"
+      - type: file
+        path: io.remnoteapp.Remnote.metainfo.xml
+    build-commands:
+      # Bundle app
+      # Install app wrapper
+      - chmod +x RemNote.AppImage
+      - ./RemNote.AppImage --appimage-extract
+      - rm RemNote.AppImage
+      - desktop-file-edit --set-icon ${FLATPAK_ID} --set-key Exec --set-value 'run.sh %U' --remove-key X-AppImage-Version --add-category Office squashfs-root/remnote.desktop
+      - install -Dm755 run.sh -t /app/bin/
+      - install -Dm644 io.remnoteapp.Remnote.metainfo.xml -t /app/share/metainfo/
+      # Install app icon and desktop file
+      - file squashfs-root/remnote.png
+      - install -Dm644 squashfs-root/remnote.png /app/share/icons/hicolor/512x512/apps/io.remnoteapp.Remnote.png
+      - install -Dm644 squashfs-root/remnote.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - mv squashfs-root /app/remnote

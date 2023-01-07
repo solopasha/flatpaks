@@ -1,0 +1,61 @@
+app-id: io.binanceapp.Binance
+runtime: org.freedesktop.Platform
+runtime-version: "21.08"
+sdk: org.freedesktop.Sdk
+branch: stable
+tags:
+  - proprietary
+base: org.electronjs.Electron2.BaseApp
+base-version: "21.08"
+command: run.sh
+build-options:
+  no-debuginfo: true
+separate-locales: false
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=x11
+  - --socket=pulseaudio
+modules:
+  - name: binance
+    buildsystem: simple
+    sources:
+      - type: extra-data
+        filename: binance-amd64-linux.deb
+        size: 104954826
+        only-arches:
+          - x86_64
+        url: https://ftp.binance.com/electron-desktop/linux/production/binance-amd64-linux.deb
+        sha256: 9488ae726f308027a7eda306ab0c3bea6217df004ddbd77709fe863e4b0650a3
+      # Wrapper to launch the app
+      - type: script
+        dest-filename: run.sh
+        commands:
+          - export TMPDIR="$XDG_RUNTIME_DIR/app/$FLATPAK_ID"
+          - exec zypak-wrapper /app/extra/binance "$@"
+      - type: script
+        commands:
+          - ar x binance-amd64-linux.deb
+          - tar -xf data.tar.xz
+          - mv opt/Binance/* .
+          - rm -rf opt usr control.tar.gz data.tar.xz debian-binary binance-amd64-linux.deb
+        dest-filename: apply_extra
+      - type: file
+        path: io.binanceapp.Binance.desktop
+      - type: file
+        path: io.binanceapp.Binance.metainfo.xml
+      - type: file
+        path: binance.png
+    build-commands:
+      # Bundle app
+      # Install app wrapper
+      - install -Dm755 run.sh -t /app/bin/
+      - install -Dm755 apply_extra -t /app/bin/
+      - install -D -t /app/bin/ /usr/bin/ar
+      - install -D -t /app/lib/ /usr/lib/x86_64-linux-gnu/libbfd-*.so
+      # Install app icon and desktop file
+      - install -Dm644 binance.png /app/share/icons/hicolor/512x512/apps/io.binanceapp.Binance.png
+      - install -Dm644 io.binanceapp.Binance.desktop -t /app/share/applications/
+      - install -Dm644 io.binanceapp.Binance.metainfo.xml -t /app/share/metainfo/

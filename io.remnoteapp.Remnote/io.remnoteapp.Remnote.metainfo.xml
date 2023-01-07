@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.remnoteapp.Remnote</id>
+  
+  <name>remnote</name>
+  <summary>All-in-one workspace for note-taking, learning, organizing thoughts and growing knowledge</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>proprietary</project_license>
+  
+  <description>
+    <p>
+      RemNote is an all-in-one learning tool that combines note-taking, knowledge management, flashcards, and spaced repetition to enable effective and efficient learning.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.remnoteapp.Remnote.desktop</launchable>
+</component>

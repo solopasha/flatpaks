@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Binance
+Comment=Buy & sell Crypto in minutes, join the world’s largest crypto exchange.
+Exec=/app/bin/run.sh %u
+Terminal=false
+Type=Application
+Icon=io.binanceapp.Binance
+StartupWMClass=Binance
+MimeType=x-scheme-handler/binance;
+Categories=Network;

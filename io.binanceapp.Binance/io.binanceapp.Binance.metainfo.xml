@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.binanceapp.Binance</id>
+  
+  <name>Binance</name>
+  <summary>Buy &amp; sell Crypto in minutes, join the world’s largest crypto exchange</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  
+  <description>
+    <p>
+      Binance is an online exchange where users can trade cryptocurrencies. It supports most commonly traded cryptocurrencies. Binance provides a crypto wallet for traders to store their electronic funds. The exchange also has supporting services for users to earn interest or transact using cryptocurrencies.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.binanceapp.Binance.desktop</launchable>
+</component>
