@@ -36,6 +36,8 @@ modules:
       - type: archive
         url: https://github.com/CDrummond/cantata/releases/download/v2.5.0/cantata-2.5.0.tar.bz2
         sha256: eb7e00ab3f567afaa02ea2c86e2fe811a475afab93182b95922c6eb126821724
+      - type: patch
+        path: desktop-file.patch
 
   - name: metainfo
     buildsystem: simple

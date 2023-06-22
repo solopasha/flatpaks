@@ -1,0 +1,13 @@
+diff --git a/gui/application_qt.cpp b/gui/application_qt.cpp
+index b09440a53..2981bca94 100644
+--- a/gui/application_qt.cpp
++++ b/gui/application_qt.cpp
+@@ -32,7 +32,7 @@ Application::Application(int &argc, char **argv)
+ {
+     setApplicationDisplayName(QLatin1String("Cantata"));
+     #if QT_VERSION >= 0x050700
+-    setDesktopFileName(QLatin1String("cantata"));
++    setDesktopFileName(QLatin1String("io.github.cdrummond.cantata"));
+     #endif
+ }
+ 
