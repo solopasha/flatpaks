@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.cdrummond.cantata</id>
+  
+  <name>cantata</name>
+  <summary>Qt5 client for the music player daemon (MPD)</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  
+  <description>
+    <p>
+      A graphical (Qt5) client for MPD, supporting the following features:
+    </p>
+    <p>
+      Supports Linux, macOS, Windows, and Haiku. NOTE: Only Linux actively supported as of 2.3.3     Multiple MPD collections.     Highly customisable layout.     Songs (optionally) grouped by album in play queue.     Context view to show artist, album, and song information of current track.     Simple tag editor.     File organizer - use tags to organize files and folders.     Ability to calculate ReplyGain tags. (Linux only, and if relevant libraries installed)     Dynamic playlists.     Smart Playlists.     Online services; Jamendo, Magnatune, SoundCloud, and Podcasts.     Radio stream support - with the ability to search for streams via TuneIn, ShoutCast, or Dirble.     USB-Mass-Storage and MTP device support. (Linux only, and if relevant libraries installed)     Audio CD ripping and playback. (Linux only, and if relevant libraries installed)     Playback of non-MPD songs - via simple in-built HTTP server.     MPRISv2 DBUS interface.     Ratings support.     &quot;Partitions&quot; support.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.github.cdrummond.cantata.desktop</launchable>
+</component>

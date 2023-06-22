@@ -1,0 +1,46 @@
+app-id: io.github.cdrummond.cantata
+runtime: org.kde.Sdk
+runtime-version: 5.15-22.08
+sdk: org.kde.Sdk
+rename-desktop-file: cantata.desktop
+rename-icon: cantata
+command: cantata
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --filesystem=xdg-run/mpd
+  - --filesystem=xdg-music
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --own-name=org.mpris.MediaPlayer2.cantata
+  - --own-name=mpd.cantata
+cleanup:
+  - /include
+  - /lib/*.a
+  - /lib/*.la
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/cmake
+  - /share/man
+
+modules:
+  - name: cantata
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_DEVICES_SUPPORT=OFF
+      - -DENABLE_REMOTE_DEVICES=OFF
+    sources:
+      - type: archive
+        url: https://github.com/CDrummond/cantata/releases/download/v2.5.0/cantata-2.5.0.tar.bz2
+        sha256: eb7e00ab3f567afaa02ea2c86e2fe811a475afab93182b95922c6eb126821724
+
+  - name: metainfo
+    buildsystem: simple
+    build-commands:
+      - install -D -m 644 -t $FLATPAK_DEST/share/metainfo $FLATPAK_ID.metainfo.xml
+    sources:
+      - type: file
+        path: io.github.cdrummond.cantata.metainfo.xml
