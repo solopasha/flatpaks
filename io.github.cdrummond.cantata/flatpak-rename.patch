@@ -1,0 +1,151 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b99e16169..d6965709e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,9 +3,9 @@ project(cantata)
+ cmake_policy(SET CMP0020 NEW)
+ 
+ #  NOTE: If PROJECT_URL, or PROJECT_REV_URL, are changed, then cantata-dynamic, README, and
+-#        dbus/mpd.cantata.xml will need renaming/updating.
++#        dbus/io.github.cdrummond.cantata.xml will need renaming/updating.
+ set(PROJECT_URL "cantata.mpd")
+-set(PROJECT_REV_URL "mpd.cantata")
++set(PROJECT_REV_URL "io.github.cdrummond.cantata")
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "kOpenBSD.*|OpenBSD.*")
+     set(OPENBSD TRUE)
+diff --git a/ChangeLog b/ChangeLog
+index 81c97e50b..efd472f7f 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -580,7 +580,7 @@
+     as artist and title.
+ 34. Resolve TuneIn radio URL's before adding to favourites (if added via TuneIn
+     search).
+-35. Use mpd.cantata for DBus service names and not com.googlecode.cantata
++35. Use io.github.cdrummond.cantata for DBus service names and not com.googlecode.cantata
+ 36. Fix OpenBSD build.
+ 37. Add option to set which prefixes to ignore when sorting.
+ 38. Add option to disable MPRIS interface.
+diff --git a/README b/README
+index 5ccc96428..8d2322789 100644
+--- a/README
++++ b/README
+@@ -491,7 +491,7 @@ playback:
+ The list of action names maybe obtained by calling the listActions DBUS method,
+ e.g.:
+ 
+-    qdbus mpd.cantata /cantata listActions
++    qdbus io.github.cdrummond.cantata /cantata listActions
+ 
+ 
+ 11. Dynamic Helper Script - Local Mode 
+diff --git a/cantata-remote.cmake b/cantata-remote.cmake
+index 8c150d8f8..3e5a21c20 100755
+--- a/cantata-remote.cmake
++++ b/cantata-remote.cmake
+@@ -39,7 +39,7 @@ fi
+ 
+ if [ $1 = "cantata" ] ; then
+     path="/cantata"
+-    methodPrefix=mpd.cantata
++    methodPrefix=io.github.cdrummond.cantata
+     method="triggerAction"
+     methodArgument=$2
+ else
+diff --git a/cantata.desktop b/cantata.desktop
+index f03712de9..e59204582 100644
+--- a/cantata.desktop
++++ b/cantata.desktop
+@@ -27,5 +27,5 @@ Icon=cantata
+ Exec=cantata %U
+ Categories=Qt;KDE;AudioVideo;Player;
+ X-DBUS-StartupType=Unique
+-X-DBUS-ServiceName=mpd.cantata
++X-DBUS-ServiceName=io.github.cdrummond.cantata
+ Keywords=Music;MPD;
+diff --git a/dbus/mpd.cantata.xml b/dbus/io.github.cdrummond.cantata.xml
+similarity index 93%
+rename from dbus/mpd.cantata.xml
+rename to dbus/io.github.cdrummond.cantata.xml
+index bf245ea08..8db7a06eb 100644
+--- a/dbus/mpd.cantata.xml
++++ b/dbus/io.github.cdrummond.cantata.xml
+@@ -2,7 +2,7 @@
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+ 
+ <node>
+-  <interface name="mpd.cantata">
++  <interface name="io.github.cdrummond.cantata">
+     <method name="showError">
+         <arg type="s" name="error" direction="in"/>
+     </method>
+diff --git a/dbus/mpris.cpp b/dbus/mpris.cpp
+index de0ebae68..d06151fdd 100644
+--- a/dbus/mpris.cpp
++++ b/dbus/mpris.cpp
+@@ -36,7 +36,7 @@ static inline qlonglong convertTime(qlonglong t)
+ Mpris::Mpris(QObject *p)
+     : QObject(p)
+ {
+-    QDBusConnection::sessionBus().registerService("org.mpris.MediaPlayer2.cantata");
++    QDBusConnection::sessionBus().registerService("org.mpris.MediaPlayer2.io.github.cdrummond.cantata");
+ 
+     new PlayerAdaptor(this);
+     new MediaPlayer2Adaptor(this);
+@@ -56,7 +56,7 @@ Mpris::Mpris(QObject *p)
+ 
+ Mpris::~Mpris()
+ {
+-    QDBusConnection::sessionBus().unregisterService("org.mpris.MediaPlayer2.cantata");
++    QDBusConnection::sessionBus().unregisterService("org.mpris.MediaPlayer2.io.github.cdrummond.cantata");
+ }
+ 
+ void Mpris::Pause()
+diff --git a/gui/application_qt.cpp b/gui/application_qt.cpp
+index b09440a53..bf759ee80 100644
+--- a/gui/application_qt.cpp
++++ b/gui/application_qt.cpp
+@@ -32,7 +32,7 @@ Application::Application(int &argc, char **argv)
+ {
+     setApplicationDisplayName(QLatin1String("Cantata"));
+     #if QT_VERSION >= 0x050700
+-    setDesktopFileName(QLatin1String("cantata"));
++    setDesktopFileName(QLatin1String("io.github.cdrummond.cantata.desktop"));
+     #endif
+ }
+ 
+@@ -46,14 +46,14 @@ bool Application::start(const QStringList &files)
+     }
+     loadFiles(files);
+     // ...and activate window!
+-    QDBusConnection::sessionBus().send(QDBusMessage::createMethodCall("mpd.cantata", "/org/mpris/MediaPlayer2", "", "Raise"));
++    QDBusConnection::sessionBus().send(QDBusMessage::createMethodCall("io.github.cdrummond.cantata", "/org/mpris/MediaPlayer2", "", "Raise"));
+     return false;
+ }
+ 
+ void Application::loadFiles(const QStringList &files)
+ {
+     if (!files.isEmpty()) {
+-        QDBusMessage m = QDBusMessage::createMethodCall("mpd.cantata", "/cantata", "", "load");
++        QDBusMessage m = QDBusMessage::createMethodCall("io.github.cdrummond.cantata", "/cantata", "", "load");
+         QList<QVariant> a;
+         a.append(files);
+         m.setArguments(a);
+diff --git a/playlists/cantata-dynamic b/playlists/cantata-dynamic
+index 110f65a7a..a2f1bcca3 100755
+--- a/playlists/cantata-dynamic
++++ b/playlists/cantata-dynamic
+@@ -605,10 +605,10 @@ sub sendMessage() {
+             # TODO: How to send a dbus (or other) message to Cantata application????
+         } else {
+             # Linux
+-            system("qdbus mpd.cantata /cantata ${method} ${argument}");
++            system("qdbus io.github.cdrummond.cantata /cantata ${method} ${argument}");
+             if ( $? == -1 ) {
+                 # Maybe qdbus is not installed? Try dbus-send...
+-                system("dbus-send --type=method_call --session --dest=mpd.cantata /cantata mpd.cantata.${method} string:${argument}");
++                system("dbus-send --type=method_call --session --dest=io.github.cdrummond.cantata /cantata io.github.cdrummond.cantata.${method} string:${argument}");
+             }
+         }
+     } else {

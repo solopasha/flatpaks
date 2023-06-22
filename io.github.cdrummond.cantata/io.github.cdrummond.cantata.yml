@@ -13,8 +13,8 @@ finish-args:
   - --filesystem=xdg-run/mpd
   - --filesystem=xdg-music
   - --talk-name=org.kde.StatusNotifierWatcher
-  - --own-name=org.mpris.MediaPlayer2.cantata
-  - --own-name=mpd.cantata
+  - --own-name=org.mpris.MediaPlayer2.io.github.cdrummond.cantata
+  - --own-name=io.github.cdrummond.cantata
 cleanup:
   - /include
   - /lib/*.a
@@ -37,7 +37,7 @@ modules:
         url: https://github.com/CDrummond/cantata/releases/download/v2.5.0/cantata-2.5.0.tar.bz2
         sha256: eb7e00ab3f567afaa02ea2c86e2fe811a475afab93182b95922c6eb126821724
       - type: patch
-        path: desktop-file.patch
+        path: flatpak-rename.patch
 
   - name: metainfo
     buildsystem: simple
