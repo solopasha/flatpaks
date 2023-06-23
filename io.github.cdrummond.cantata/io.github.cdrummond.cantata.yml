@@ -3,7 +3,6 @@ runtime: org.kde.Sdk
 runtime-version: 5.15-22.08
 sdk: org.kde.Sdk
 rename-desktop-file: cantata.desktop
-rename-icon: cantata
 command: cantata
 finish-args:
   - --device=dri
@@ -37,7 +36,72 @@ modules:
         url: https://github.com/CDrummond/cantata/releases/download/v2.5.0/cantata-2.5.0.tar.bz2
         sha256: eb7e00ab3f567afaa02ea2c86e2fe811a475afab93182b95922c6eb126821724
       - type: patch
-        path: flatpak-rename.patch
+        paths:
+          - flatpak-rename.patch
+          - use-built-perl.patch
+
+  - name: perl
+    buildsystem: simple
+    build-commands:
+      - ./Configure -des -Duseshrplib -Dusethreads -Duseithreads -Dprefix=$FLATPAK_DEST -Dman1dir=none -Dman3dir=none -Doptimize="${CFLAGS}" -Dcccdlflags='-fPIC' -Dlddlflags="-shared ${LDFLAGS}" -Dldflags="${LDFLAGS}"
+      - make
+      - make install
+    post-install:
+      # Fix wrong permissions
+      - chmod -R u+w $FLATPAK_DEST/lib/perl5
+    cleanup:
+      - /bin/corelist
+      - /bin/cpan
+      - /bin/enc2xs
+      - /bin/encguess
+      - /bin/h2ph
+      - /bin/h2xs
+      - /bin/instmodsh
+      - /bin/json_pp
+      - /bin/libnetcfg
+      - /bin/perl5*
+      - /bin/perlbug
+      - /bin/perldoc
+      - /bin/perlivp
+      - /bin/perlthanks
+      - /bin/piconv
+      - /bin/pl2pm
+      - /bin/pod2html
+      - /bin/pod2man
+      - /bin/pod2text
+      - /bin/pod2usage
+      - /bin/podchecker
+      - /bin/prove
+      - /bin/ptar
+      - /bin/ptardiff
+      - /bin/ptargrep
+      - /bin/shasum
+      - /bin/splain
+      - /bin/streamzip
+      - /bin/xsubpp
+      - /bin/zipdetails
+      - "*.pod"
+    sources:
+      - type: git
+        url: https://github.com/Perl/perl5.git
+        tag: v5.36.1
+        commit: 42e3343be621a2b9cdb98befd92de43cc0b7ef3e
+
+  - name: perl-libs
+    buildsystem: simple
+    build-commands:
+      - "perl-libs/install.sh"
+    # Same as with the Perl module, we need to restore write permission.
+    # However, -f is now passed to avoid errors from trying to touch files from the
+    # above module that are now marked as read-only.
+    post-install:
+      - "chmod -Rf u+w /app/lib/perl5/site_perl"
+    sources:
+      - generated-sources.json
+    # This step should be customized based on the CPAN packages you're using.
+    cleanup:
+      - "/bin"
+      - "/man"
 
   - name: metainfo
     buildsystem: simple

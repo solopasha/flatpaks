@@ -1,0 +1,10 @@
+diff --git a/playlists/cantata-dynamic b/playlists/cantata-dynamic
+index a2f1bcca3..8d0710b2e 100755
+--- a/playlists/cantata-dynamic
++++ b/playlists/cantata-dynamic
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/app/bin/perl
+ 
+ #  Cantata-Dynamic
+ #

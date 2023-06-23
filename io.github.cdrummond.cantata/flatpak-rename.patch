@@ -111,7 +111,7 @@ index b09440a53..bf759ee80 100644
      setApplicationDisplayName(QLatin1String("Cantata"));
      #if QT_VERSION >= 0x050700
 -    setDesktopFileName(QLatin1String("cantata"));
-+    setDesktopFileName(QLatin1String("io.github.cdrummond.cantata.desktop"));
++    setDesktopFileName(QLatin1String("io.github.cdrummond.cantata"));
      #endif
  }
  

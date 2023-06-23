@@ -1,0 +1,57 @@
+[
+   {
+      "dest": "perl-libs/IO",
+      "sha256": "5493ea55998728cd2b7ecb8234c58fb5d5df27098d0f07addca22444d7616ce0",
+      "type": "archive",
+      "url": "https://cpan.metacpan.org/authors/id/T/TO/TODDR/IO-1.51.tar.gz"
+   },
+   {
+      "dest": "perl-libs/Socket",
+      "sha256": "85448811e9e274374404634f3c208afa936ee4d223e76251ea9868315b0c812f",
+      "type": "archive",
+      "url": "https://cpan.metacpan.org/authors/id/P/PE/PEVANS/Socket-2.037.tar.gz"
+   },
+   {
+      "dest": "perl-libs/Encode",
+      "sha256": "9163f848eef69e4d4cc8838397f0861fd9ea7ede001117dbd9694f8d95052ef5",
+      "type": "archive",
+      "url": "https://cpan.metacpan.org/authors/id/D/DA/DANKOGAI/Encode-3.19.tar.gz"
+   },
+   {
+      "dest": "perl-libs/Scalar-List-Utils",
+      "sha256": "cafbdf212f6827dc9a0dd3b57b6ee50e860586d7198228a33262d55c559eb2a9",
+      "type": "archive",
+      "url": "https://cpan.metacpan.org/authors/id/P/PE/PEVANS/Scalar-List-Utils-1.63.tar.gz"
+   },
+   {
+      "dest": "perl-libs/URI",
+      "sha256": "8fed5f819905c8a8e18f4447034322d042c3536b43c13ac1f09ba92e1a50a394",
+      "type": "archive",
+      "url": "https://cpan.metacpan.org/authors/id/S/SI/SIMBABQUE/URI-5.19.tar.gz"
+   },
+   {
+      "commands": [
+         "set -e",
+         "function make_install {",
+         "    mod_dir=$1",
+         "    cd $mod_dir",
+         "    if [ -f 'Makefile.PL' ]; then",
+         "        perl Makefile.PL PREFIX=${FLATPAK_DEST} && make install PREFIX=${FLATPAK_DEST}",
+         "    elif [ -f 'Build.PL' ]; then",
+         "        perl Build.PL && ./Build && ./Build install",
+         "    else",
+         "        echo 'No Makefile.PL or Build.PL found. Do not know how to install this module'",
+         "        exit 1",
+         "    fi",
+         "}",
+         "(make_install perl-libs/IO)",
+         "(make_install perl-libs/Socket)",
+         "(make_install perl-libs/Encode)",
+         "(make_install perl-libs/Scalar-List-Utils)",
+         "(make_install perl-libs/URI)"
+      ],
+      "dest": "perl-libs",
+      "dest-filename": "install.sh",
+      "type": "script"
+   }
+]
