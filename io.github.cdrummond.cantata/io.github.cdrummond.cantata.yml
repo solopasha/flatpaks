@@ -1,5 +1,5 @@
 app-id: io.github.cdrummond.cantata
-runtime: org.kde.Sdk
+runtime: org.kde.Platform
 runtime-version: 5.15-22.08
 sdk: org.kde.Sdk
 rename-desktop-file: cantata.desktop
