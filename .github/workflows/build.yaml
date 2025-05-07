@@ -6,7 +6,7 @@ on:
       appids:
         type: string
         description: app IDs to build
-  # push:
+  push:
   pull_request:
 
 jobs:
