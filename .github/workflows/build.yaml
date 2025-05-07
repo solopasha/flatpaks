@@ -202,6 +202,17 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
+      - name: Download repo
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir repo
+          pushd repo
+          ostree init --repo . --mode=archive-z2
+          ostree remote add ${{ github.repository_owner }} \
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} \
+            --gpg-import=../RPM-GPG-KEY-${{ github.repository_owner }}
+          ostree pull --mirror ${{ github.repository_owner }}
+
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -218,7 +229,7 @@ jobs:
           Homepage=${{ github.repositoryUrl }}
           Description=${{ github.repository }}
           Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
-          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-solopasha)
+          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
           EOF
 
       - name: Update repo metadata
