@@ -27,6 +27,9 @@ finish-args:
   - --talk-name=org.gnome.SessionManager
 
 cleanup:
+  - '*.a'
+  - '*.la'
+  - '*.prl'
   - /doc
   - /include
   - /lib/cmake
@@ -36,10 +39,10 @@ cleanup:
   - /mkspecs
   - /modules
   - /share/doc
+  - /share/fish
   - /share/man
-  - '*.prl'
-  - '*.la'
-  - '*.a'
+  - /share/pkgconfig
+  - /share/zsh
 
 modules:
   - name: luajit
@@ -328,7 +331,7 @@ modules:
           type: anitya
           project-id: 15982
           stable-only: true
-          url-template: https://github.com/vapoursynth/vapoursynth/archive/$version.tar.gz
+          url-template: https://github.com/vapoursynth/vapoursynth/archive/R$version.tar.gz
 
   - name: amf-headers
     buildsystem: simple
