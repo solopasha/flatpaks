@@ -37,7 +37,7 @@ jobs:
       - name: Assemble build matrix
         id: builds
         run: |
-          if [[ "${{ github.actor }}" == "solopasha" && ("${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request") ]]; then
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
             APPS="${{ steps.changed_files.outputs.all_changed_files }}"
             echo "Building changed manifests: $APPS"
           elif [[ "${{ inputs.appids }}" != "" ]]; then
@@ -200,6 +200,7 @@ jobs:
         with:
           path: repo
           key: repo-${{ github.sha }}
+          restore-keys: repo-
 
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
@@ -222,7 +223,7 @@ jobs:
 
       - name: Update repo metadata
         run: |
-          mkdir -p repo/refs/remotes && touch repo/refs/remotes/.gitkeep
+          mkdir -p repo/refs/remotes
           flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
 
       - name: Upload repo
