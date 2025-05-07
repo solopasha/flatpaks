@@ -1,0 +1,305 @@
+{
+    "id": "org.kde.gwenview",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "6.9",
+    "sdk": "org.kde.Sdk",
+    "command": "gwenview",
+    "rename-icon": "gwenview",
+    "finish-args": [
+        "--device=dri",
+        "--filesystem=host",
+        "--filesystem=xdg-cache/thumbnails:rw",
+        "--filesystem=xdg-data/Trash",
+        "--share=ipc",
+        "--socket=cups",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--socket=wayland"
+    ],
+    "cleanup": [
+        "*.a",
+        "*.la",
+        "/include",
+        "/lib/cmake",
+        "/lib/pkgconfig",
+        "/share/man"
+    ],
+    "build-options": {
+        "strip": true,
+        "no-debuginfo": true,
+        "cflags": "-DNDEBUG -g0",
+        "cxxflags": "-DNDEBUG -g0"
+    },
+    "add-extensions": {
+        "org.freedesktop.Platform.ffmpeg-full": {
+            "directory": "lib/ffmpeg",
+            "version": "24.08",
+            "add-ld-path": ".",
+            "no-autodownload": false
+        }
+    },
+    "cleanup-commands": [
+        "mkdir -p /app/lib/ffmpeg"
+    ],
+    "modules": [
+        {
+            "name": "inih",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Ddefault_library=shared",
+                "-Ddistro_install=true",
+                "-Dwith_INIReader=true"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/benhoyt/inih/archive/refs/tags/r60.tar.gz",
+                    "sha256": "706aa05c888b53bd170e5d8aa8f8a9d9ccf5449dfed262d5103d1f292af26774",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 11600,
+                        "stable-only": true,
+                        "url-template": "https://github.com/benhoyt/inih/archive/refs/tags/r$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "exiv2",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DBUILD_SHARED_LIBS=ON",
+                "-DEXIV2_ENABLE_XMP=ON",
+                "-DEXIV2_ENABLE_EXTERNAL_XMP=OFF",
+                "-DEXIV2_ENABLE_PNG=ON",
+                "-DEXIV2_ENABLE_NLS=ON",
+                "-DEXIV2_ENABLE_PRINTUCS2=ON",
+                "-DEXIV2_ENABLE_LENSDATA=ON",
+                "-DEXIV2_ENABLE_VIDEO=OFF",
+                "-DEXIV2_ENABLE_WEBREADY=OFF",
+                "-DEXIV2_ENABLE_DYNAMIC_RUNTIME=OFF",
+                "-DEXIV2_ENABLE_CURL=OFF",
+                "-DEXIV2_ENABLE_SSH=OFF",
+                "-DEXIV2_BUILD_SAMPLES=OFF",
+                "-DEXIV2_BUILD_PO=OFF",
+                "-DEXIV2_BUILD_EXIV2_COMMAND=OFF",
+                "-DEXIV2_BUILD_UNIT_TESTS=OFF",
+                "-DEXIV2_BUILD_DOC=OFF",
+                "-DEXIV2_TEAM_EXTRA_WARNINGS=OFF",
+                "-DEXIV2_TEAM_WARNINGS_AS_ERRORS=OFF",
+                "-DEXIV2_TEAM_USE_SANITIZERS=OFF",
+                "-DEXIV2_ENABLE_WIN_UNICODE=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Exiv2/exiv2/archive/refs/tags/v0.28.5.tar.gz",
+                    "sha256": "e1671f744e379a87ba0c984617406fdf8c0ad0c594e5122f525b2fb7c28d394d",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 769,
+                        "stable-only": true,
+                        "url-template": "https://github.com/Exiv2/exiv2/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "cfitsio",
+            "cleanup": [
+                "/bin/cookbook",
+                "/bin/smem",
+                "/bin/testprog"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.6.2.tar.gz",
+                    "sha256": "66fd078cc0bea896b0d44b120d46d6805421a5361d3a5ad84d9f397b1b5de2cb",
+                    "disable-http-decompression": true,
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 270,
+                        "stable-only": true,
+                        "url-template": "https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "jasper",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DJAS_ENABLE_SHARED=ON",
+                "-DJAS_ENABLE_LIBJPEG=ON",
+                "-DJAS_ENABLE_OPENGL=OFF",
+                "-DJAS_LOCAL=OFF",
+                "-DJAS_ENABLE_DOC=OFF",
+                "-DJAS_ENABLE_PROGRAMS=OFF",
+                "-DALLOW_IN_SOURCE_BUILD=ON"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/jasper-software/jasper/archive/version-4.2.5.tar.gz",
+                    "sha256": "3f4b1df7cab7a3cc67b9f6e28c730372f030b54b0faa8548a9ee04ae83fffd44",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1421,
+                        "stable-only": true,
+                        "url-template": "https://github.com/jasper-software/jasper/archive/version-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libraw",
+            "builddir": true,
+            "config-opts": [
+                "--disable-examples",
+                "--disable-static"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.libraw.org/data/LibRaw-0.21.4.tar.gz",
+                    "sha256": "6be43f19397e43214ff56aab056bf3ff4925ca14012ce5a1538a172406a09e63",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1709,
+                        "stable-only": true,
+                        "url-template": "https://www.libraw.org/data/LibRaw-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libkdcraw",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF",
+                "-DQT_MAJOR_VERSION=6"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/graphics/libkdcraw.git",
+                    "commit": "4665da095d8651826a159cbf1c682046ff8140fe",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/graphics%2Flibkdcraw/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "lmdb",
+            "no-autogen": true,
+            "make-install-args": [
+                "prefix=/app"
+            ],
+            "subdir": "libraries/liblmdb",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.33/openldap-LMDB_0.9.33.tar.bz2",
+                    "sha256": "d19d52725800177b89d235161c0af8ae8b2932207e3c9eb87e95b61f1925206d",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 6974,
+                        "stable-only": true,
+                        "url-template": "https://git.openldap.org/openldap/openldap/-/archive/LMDB_$version/openldap-LMDB_$version.tar.bz2"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "baloo",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/frameworks/6.13/baloo-6.13.0.tar.xz",
+                    "sha256": "5b4574d9a4a080bdc975e931bd411a7386a0c17ff0d5c5751dd26c92010133f8",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 8762,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/frameworks/$major.$minor/baloo-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kColorPicker",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_WITH_QT6=ON",
+                "-DBUILD_SHARED_LIBS=ON"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/ksnip/kColorPicker/archive/refs/tags/v0.3.1.tar.gz",
+                    "sha256": "e78c785ec4a8a22a48a91835c97601f5704b5076b154415353b0d2697dc0b4f7",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 120606,
+                        "stable-only": true,
+                        "url-template": "https://github.com/ksnip/kColorPicker/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kImageAnnotator",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_WITH_QT6=ON",
+                "-DBUILD_SHARED_LIBS=ON"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v0.7.1.tar.gz",
+                    "sha256": "2335c5be15a5dde34c3333c10a6339da114e2232e4c4642dea1793e491e09677",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 120605,
+                        "stable-only": true,
+                        "url-template": "https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "gwenview",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/graphics/gwenview",
+                    "commit": "1e8a12817e81859c78adc4a853be1a86aa420230",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/graphics%2Fgwenview/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ]
+        }
+    ]
+}

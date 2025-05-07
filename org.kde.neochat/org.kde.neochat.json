@@ -1,0 +1,272 @@
+{
+    "id": "org.kde.neochat",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "6.9",
+    "sdk": "org.kde.Sdk",
+    "command": "neochat",
+    "rename-icon": "org.kde.neochat",
+    "finish-args": [
+        "--device=dri",
+        "--filesystem=xdg-download",
+        "--share=ipc",
+        "--share=network",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--socket=wayland",
+        "--talk-name=org.unifiedpush.Distributor.*",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.kde.StatusNotifierWatcher",
+        "--talk-name=org.freedesktop.secrets",
+        "--talk-name=org.kde.kwalletd5",
+        "--talk-name=org.kde.kwalletd6",
+        "--env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess"
+    ],
+    "build-options": {
+        "strip": true,
+        "no-debuginfo": true,
+        "cflags": "-DNDEBUG -g0",
+        "cxxflags": "-DNDEBUG -g0"
+    },
+    "cleanup": [
+        "*.a",
+        "*.la",
+        "/include",
+        "/lib/cmake",
+        "/lib/pkgconfig",
+        "/share/man",
+        "/mkspecs",
+        "/share/kdevappwizard"
+    ],
+    "modules": [
+        {
+            "name": "olm",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.matrix.org/matrix-org/olm.git",
+                    "commit": "7e0c8277032e40308987257b711b38af8d77cc69",
+                    "tag": "3.2.16"
+                }
+            ]
+        },
+        {
+            "name": "libsecret",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dmanpage=false",
+                "-Dvapi=false",
+                "-Dgtk_doc=false",
+                "-Dintrospection=false",
+                "-Dcrypto=disabled"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/share/man"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.7.tar.xz",
+                    "sha256": "6b452e4750590a2b5617adc40026f28d2f4903de15f1250e1d1c40bfd68ed55e",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 13150,
+                        "stable-only": true,
+                        "url-template": "https://download.gnome.org/sources/libsecret/${version0}.${version1}/libsecret-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "qtkeychain",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "cleanup": [
+                "mkspecs"
+            ],
+            "config-opts": [
+                "-DCMAKE_INSTALL_LIBDIR=/app/lib",
+                "-DLIB_INSTALL_DIR=/app/lib",
+                "-DBUILD_TRANSLATIONS=NO",
+                "-DBUILD_WITH_QT6=ON",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/frankosterfeld/qtkeychain/archive/0.15.0.tar.gz",
+                    "sha256": "f4254dc8f0933b06d90672d683eab08ef770acd8336e44dfa030ce041dc2ca22",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 4138,
+                        "stable-only": true,
+                        "url-template": "https://github.com/frankosterfeld/qtkeychain/archive/$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "cmark",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMARK_TESTS=OFF",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/commonmark/cmark/archive/0.31.1.tar.gz",
+                    "sha256": "3da93db5469c30588cfeb283d9d62edfc6ded9eb0edc10a4f5bbfb7d722ea802",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 9159,
+                        "stable-only": true,
+                        "url-template": "https://github.com/commonmark/cmark/archive/$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libquotient",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DBUILD_TESTING=OFF",
+                "-DQuotient_ENABLE_E2EE=ON",
+                "-DBUILD_WITH_QT6=ON",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_SHARED_LIBS=ON"
+            ],
+            "cleanup": [
+                "/bin/qmc-example",
+                "/include",
+                "/share"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/quotient-im/libQuotient.git",
+                    "commit": "4fd1d8ef558738ecbdc6edee85535ce500fb97e8",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://api.github.com/repos/quotient-im/libQuotient/commits",
+                        "commit-query": "first( .[].sha )",
+                        "timestamp-query": "first( .[].commit.committer.date )"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kquickimageeditor",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DBUILD_WITH_QT6=ON",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/kquickimageeditor/kquickimageeditor-0.5.1.tar.xz",
+                    "sha256": "f08271f368ead077fa3ed95c32446dd873f8b371d9756aefb757bea323339b29",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 229033,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/kquickimageeditor/kquickimageeditor-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kirigami-addons",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_TESTING=OFF",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/libraries/kirigami-addons.git",
+                    "commit": "27b76ac914fe4cc82691ee850c3f31c6fc1d47c4",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kunifiedpush",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DBUILD_TESTING=OFF",
+                "-DKUNIFIEDPUSH_CLIENT_ONLY=ON"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/libraries/kunifiedpush.git",
+                    "commit": "0dcdb3dfd9de1baf2479db86496377d78247123f",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkunifiedpush/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "neochat",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DNEOCHAT_FLATPAK=ON",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_TESTING=OFF",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+            ],
+            "post-install": [
+                "echo $CXXFLAGS"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/network/neochat.git",
+                    "commit": "107f3b6616997b2c4035cf670305cee927e8aac8",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ]
+        }
+    ]
+}
