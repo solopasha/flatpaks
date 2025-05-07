@@ -1,0 +1,48 @@
+name: 'Check for external updates'
+on:
+  schedule:
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-matrix:
+    name: Collect list of Flatpak manifests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      manifests: ${{ steps.get-manifests.outputs.manifests }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - id: get-manifests
+      run: |
+        MANIFESTS=$(find . -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \) | jq -R -s -c 'split("\n")[:-1]')
+        echo "manifests=$MANIFESTS" >> $GITHUB_OUTPUT
+        echo "::group::Manifests found"
+        echo $MANIFESTS | jq
+        echo "::endgroup::"
+
+  flathub-data-checker-global:
+    needs:
+      - build-matrix
+    name: ${{ matrix.manifest }}
+    strategy:
+      fail-fast: false
+      matrix:
+        manifest: ${{ fromJson(needs.build-matrix.outputs.manifests) }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
+      env:
+        GIT_AUTHOR_NAME: Flatpak External Data Checker
+        GIT_COMMITTER_NAME: Flatpak External Data Checker
+        GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+        GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+        GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+      with:
+        args: --update --never-fork ${{ matrix.manifest }}

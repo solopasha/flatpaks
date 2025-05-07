@@ -1,0 +1,235 @@
+name: Build and push
+
+on:
+  workflow_dispatch:
+    inputs:
+      appids:
+        type: string
+        description: app IDs to build
+  # push:
+  pull_request:
+
+jobs:
+  builds:
+    name: Assemble build matrix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.builds.outputs.matrix }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed manifests
+        if: github.event_name == 'push' || github.event_name == 'pull-request'
+        id: changed_files
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
+        with:
+          files: |
+            */*.yml
+            */*.yaml
+            */*.json
+
+      - name: Assemble build matrix
+        id: builds
+        run: |
+          if [[ "${{ github.actor }}" == "solopasha" && ("${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request") ]]; then
+            APPS="${{ steps.changed_files.outputs.all_changed_files }}"
+            echo "Building changed manifests: $APPS"
+          elif [[ "${{ inputs.appids }}" != "" ]]; then
+            APPS_TO_BUILD=(${{ inputs.appids }})
+            declare -a APPS=()
+            for appid in "${APPS_TO_BUILD[@]}"; do
+              APPS+=($(find . -maxdepth 2 \( -iname "${appid}.yaml" -o -iname "${appid}.yml" -o -iname "${appid}.json" \)))
+            done
+            echo "Building specified apps: $APPS"
+          else
+            mapfile -t APPS < <(find . -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \))
+            echo -e "Building all apps:\n$APPS"
+          fi
+
+          APPS_JSON='{"app": []}'
+          for manifest in "${APPS[@]}"; do
+            MANIFEST_FILENAME="$manifest"
+            APPID=$(basename ${manifest%.*})
+            APPS_JSON=$(jq -c --arg appid "$APPID" --arg manifest "$manifest" \
+              '.app += [{"appid": $appid, "manifest": $manifest}]' <<< "$APPS_JSON")
+          done
+          echo "$APPS_JSON"
+
+          echo "matrix=$APPS_JSON" >> $GITHUB_OUTPUT
+
+  flatpak:
+    name: ${{ matrix.app.appid }} build
+    runs-on: ubuntu-latest
+    needs: builds
+    permissions:
+      contents: read
+    container:
+      image: registry.fedoraproject.org/fedora:latest
+      options: --privileged
+    strategy:
+      matrix: ${{fromJson(needs.builds.outputs.matrix)}}
+      fail-fast: false
+
+    steps:
+      - name: Prepare
+        run: |
+          dnf -y up && dnf -y install --setopt=install_weak_deps=False \
+            ccache \
+            flatpak-builder \
+            git-core \
+            patch \
+            zstd
+          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Restore cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .flatpak-builder
+          key: ${{ matrix.app.appid }}-${{ hashFiles(format('{0}', matrix.app.appid)) }}
+          restore-keys: ${{ matrix.app.appid }}-
+
+      - name: Key
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          GPGKEY: ${{ secrets.GPGKEY }}
+        run: |
+          echo "$GPGKEY" > ${{ github.repository_owner }}.private
+          gpg --import ${{ github.repository_owner }}.private
+          rm ${{ github.repository_owner }}.private
+
+      - name: Build
+        if: github.event_name == 'pull-request'
+        run: |
+          flatpak-builder --repo=repo --disable-rofiles-fuse --ccache \
+            --install-deps-from=flathub --force-clean \
+            --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
+
+          flatpak build-bundle repo ${{ matrix.app.appid }}.flatpak \
+            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+            --arch=x86_64 ${{ matrix.app.appid }} master
+
+      - name: Build signed
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          flatpak-builder --repo=repo --disable-rofiles-fuse --ccache \
+            --install-deps-from=flathub --force-clean --gpg-sign=dc812d3cb7855746 \
+            --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
+
+          flatpak build-bundle repo ${{ matrix.app.appid }}.flatpak \
+            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+            --arch=x86_64 --gpg-sign=dc812d3cb7855746 ${{ matrix.app.appid }} master
+
+          flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
+
+      - name: Upload repo as artifact
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          path: repo
+          name: ${{ matrix.app.appid }}_repo.zip
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app.appid }}-bundle
+          path: ${{ matrix.app.appid }}.flatpak
+          retention-days: 21
+          compression-level: 0
+
+      - name: Save cache
+        id: cache-save
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .flatpak-builder
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+
+  deploy:
+    if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
+    needs: flatpak
+    permissions:
+      pages: write
+      id-token: write
+    container:
+      image: registry.fedoraproject.org/fedora:latest
+      options: --privileged
+    concurrency:
+      group: repo-update
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare
+        run: |
+          dnf -y up && dnf -y install --setopt=install_weak_deps=False \
+            ccache \
+            flatpak-builder \
+            git-core \
+            patch \
+            zstd
+          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Key
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          GPGKEY: ${{ secrets.GPGKEY }}
+        run: |
+          echo "$GPGKEY" > ${{ github.repository_owner }}.private
+          gpg --import ${{ github.repository_owner }}.private
+          rm ${{ github.repository_owner }}.private
+
+      - uses: actions/checkout@v4
+
+      - name: Cache repo
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: repo
+          key: repo-${{ github.sha }}
+
+      - name: Grab build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*_repo.zip"
+          path: repo
+          merge-multiple: true
+
+      - name: flatpakrepo
+        run: |
+          cat << EOF > repo/index.flatpakrepo
+          [Flatpak Repo]
+          Title=${{ github.repository }}
+          Url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          Homepage=${{ github.repositoryUrl }}
+          Description=${{ github.repository }}
+          Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
+          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-solopasha)
+          EOF
+
+      - name: Update repo metadata
+        run: |
+          mkdir -p repo/refs/remotes && touch repo/refs/remotes/.gitkeep
+          flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
+
+      - name: Upload repo
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
