@@ -7,6 +7,8 @@ on:
         type: string
         description: app IDs to build
   push:
+    paths-ignore:
+      - '.github/workflows/*'
   pull_request:
 
 jobs:
