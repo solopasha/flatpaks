@@ -325,8 +325,8 @@ modules:
       - --with-python-prefix=${FLATPAK_DEST}
     sources:
       - type: archive
-        url: https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R70.tar.gz
-        sha256: 59c813ec36046be33812408ff00e16cae63c6843af6acf4e34595910a80e267b
+        url: https://github.com/vapoursynth/vapoursynth/archive/R71.tar.gz
+        sha256: c56d6de16d0a24db7eee1bd5e633229b0bd8a746eafcfe41945a22f9d44f8bd6
         x-checker-data:
           type: anitya
           project-id: 15982
