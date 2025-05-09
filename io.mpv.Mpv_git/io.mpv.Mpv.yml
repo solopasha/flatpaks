@@ -5,7 +5,6 @@ sdk: org.freedesktop.Sdk
 command: mpv
 rename-desktop-file: mpv.desktop
 rename-icon: mpv
-branch: stable
 
 finish-args:
   - --share=ipc
@@ -472,11 +471,12 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        tag: v0.40.0
-        commit: e48ac7ce08462f5e33af6ef9deeac6fa87eef01e
+        commit: b3070d1255c461871db2e66918cab225512ea38f
         x-checker-data:
-          type: git
-          tag-pattern: ^v([\d.]+)$
+          type: json
+          url: https://api.github.com/repos/mpv-player/mpv/branches/master
+          commit-query: .commit.sha
+          timestamp-query: .commit.commit.committer.date
       - type: file
         path: io.mpv.Mpv.appdata.xml
       # Automatically update version and date in io.mpv.Mpv.appdata.xml
