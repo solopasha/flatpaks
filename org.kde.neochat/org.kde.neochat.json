@@ -20,12 +20,6 @@
         "--talk-name=org.kde.kwalletd5",
         "--talk-name=org.kde.kwalletd6"
     ],
-    "build-options": {
-        "strip": true,
-        "no-debuginfo": true,
-        "cflags": "-DNDEBUG -g0",
-        "cxxflags": "-DNDEBUG -g0"
-    },
     "cleanup": [
         "*.a",
         "*.la",

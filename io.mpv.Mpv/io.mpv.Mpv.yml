@@ -44,12 +44,6 @@ cleanup:
   - /share/pkgconfig
   - /share/zsh
 
-build-options:
-  strip: true
-  no-debuginfo: true
-  cflags: -DNDEBUG -g0
-  cxxflags: -DNDEBUG -g0
-
 modules:
   - name: luajit
     no-autogen: true

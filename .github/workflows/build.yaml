@@ -122,6 +122,10 @@ jobs:
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
             --arch=x86_64 ${{ matrix.app.appid }} master
 
+          flatpak build-bundle repo ${{ matrix.app.appid }}.Debug.flatpak \
+            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+            --arch=x86_64 --runtime ${{ matrix.app.appid }}.Debug master
+
       - name: Build signed
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
@@ -133,6 +137,17 @@ jobs:
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
             --arch=x86_64 --gpg-sign=dc812d3cb7855746 ${{ matrix.app.appid }} master
 
+          flatpak build-bundle repo ${{ matrix.app.appid }}.Debug.flatpak \
+            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+            --arch=x86_64 --gpg-sign=dc812d3cb7855746 --runtime \
+            ${{ matrix.app.appid }}.Debug master
+
+      - name: Prune debuginfo from repo
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          for ref in $(ostree refs --repo=repo | grep '^runtime.*Debug'); do
+              ostree refs --repo=repo --delete "$ref"
+          done
           flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
 
       - name: Upload repo as artifact
@@ -149,7 +164,15 @@ jobs:
         with:
           name: ${{ matrix.app.appid }}-bundle
           path: ${{ matrix.app.appid }}.flatpak
-          retention-days: 21
+          retention-days: 1
+          compression-level: 0
+
+      - name: Upload debuginfo
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app.appid }}-bundle.Debug
+          path: ${{ matrix.app.appid }}.Debug.flatpak
+          retention-days: 3
           compression-level: 0
 
       - name: Save cache

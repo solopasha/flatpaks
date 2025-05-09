@@ -24,12 +24,6 @@
         "/lib/pkgconfig",
         "/share/man"
     ],
-    "build-options": {
-        "strip": true,
-        "no-debuginfo": true,
-        "cflags": "-DNDEBUG -g0",
-        "cxxflags": "-DNDEBUG -g0"
-    },
     "add-extensions": {
         "org.freedesktop.Platform.ffmpeg-full": {
             "directory": "lib/ffmpeg",
