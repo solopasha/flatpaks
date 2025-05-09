@@ -251,7 +251,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/neochat.git",
-                    "commit": "489e60996a8f963621d802214eb7937471b086f5",
+                    "commit": "36a5e8bdb502f5a9115c0f9fb502e9741c356e7f",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
