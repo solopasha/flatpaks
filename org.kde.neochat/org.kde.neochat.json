@@ -154,7 +154,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/quotient-im/libQuotient.git",
-                    "commit": "0dfbfae1475a5168efa46276c87203763d325ee4",
+                    "commit": "632f372a9c3bde85af357ad664e94397e637ad31",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/quotient-im/libQuotient/commits",
