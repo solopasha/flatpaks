@@ -123,36 +123,58 @@ jobs:
           gpg --import ${{ github.repository_owner }}.private
           rm ${{ github.repository_owner }}.private
 
-      - name: Build
-        if: github.event_name == 'pull_request'
+      - name: Download sources
         run: |
-          flatpak-builder --repo=repo --disable-rofiles-fuse --ccache \
-            --install-deps-from=flathub --force-clean \
-            --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
+          max_retries=5
+          sleep_seconds=7
 
-          flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
-            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 ${{ matrix.app.appid }} ${{ matrix.app.branch }}
+          for (( retry_count=0; retry_count<$max_retries; retry_count++ )); do
+              if flatpak-builder --force-clean --sandbox --download-only builddir ${{ matrix.app.manifest }}; then
+                  exit 0
+              fi
 
-          flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
-            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 --runtime ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
+              if [[ $retry_count -lt $((max_retries - 1)) ]]; then
+                  echo "Attempt $((retry_count + 1)) failed. Retrying in $sleep_seconds seconds..."
+                  sleep $sleep_seconds
+              fi
+          done
 
-      - name: Build signed
+          echo "Failed after $max_retries attempts"
+          exit 1
+
+      - name: Build
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
-          flatpak-builder --repo=repo --disable-rofiles-fuse --ccache \
-            --install-deps-from=flathub --force-clean --gpg-sign=dc812d3cb7855746 \
-            --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
+          if [[ ${{ github.event_name }} == "push" || ${{ github.event_name }} == "workflow_dispatch" ]]; then
+            gpgsign="--gpg-sign=${{ vars.FINGERPRINT }}"
+          else
+            gpgsign=""
+          fi
+
+          flatpak-builder \
+            --arch=x86_64 \
+            --ccache \
+            --default-branch=master \
+            --delete-build-dirs \
+            --disable-rofiles-fuse \
+            --force-clean \
+            $gpgsign \
+            --install-deps-from=flathub \
+            --repo=repo \
+            --sandbox \
+            builddir ${{ matrix.app.manifest }}
 
           flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 --gpg-sign=dc812d3cb7855746 \
+            --arch=x86_64 \
+            $gpgsign \
             ${{ matrix.app.appid }} ${{ matrix.app.branch }}
 
           flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 --gpg-sign=dc812d3cb7855746 --runtime \
+            --arch=x86_64 \
+            $gpgsign \
+            --runtime \
             ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
 
       - name: Prune debuginfo from repo
