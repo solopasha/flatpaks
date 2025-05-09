@@ -56,17 +56,29 @@ jobs:
 
           APPS_JSON='{"app": []}'
           for manifest in "${APPS[@]}"; do
-            MANIFEST_FILENAME="$manifest"
             APPID=$(basename ${manifest%.*})
+            DIRNAME=$(dirname ${manifest#./})
+            case "$manifest" in
+              *.json)
+                BRANCH=$(jq -r '.branch // "master"' "$manifest")
+                ;;
+              *.yml|*.yaml)
+                BRANCH=$(yq '.branch // "master"' "$manifest")
+                ;;
+              *)
+                exit 1
+                ;;
+            esac
             APPS_JSON=$(jq -c --arg appid "$APPID" --arg manifest "$manifest" \
-              '.app += [{"appid": $appid, "manifest": $manifest}]' <<< "$APPS_JSON")
+              --arg dirname "$DIRNAME" --arg branch "$BRANCH" \
+              '.app += [{"appid": $appid, "manifest": $manifest, "dirname": $dirname, "branch": $branch}]' <<< "$APPS_JSON")
           done
           echo "$APPS_JSON"
 
           echo "matrix=$APPS_JSON" >> $GITHUB_OUTPUT
 
   flatpak:
-    name: ${{ matrix.app.appid }} build
+    name: ${{ matrix.app.dirname }} build
     runs-on: ubuntu-latest
     continue-on-error: true
     needs: builds
@@ -118,13 +130,13 @@ jobs:
             --install-deps-from=flathub --force-clean \
             --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
 
-          flatpak build-bundle repo ${{ matrix.app.appid }}.flatpak \
+          flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 ${{ matrix.app.appid }} master
+            --arch=x86_64 ${{ matrix.app.appid }} ${{ matrix.app.branch }}
 
-          flatpak build-bundle repo ${{ matrix.app.appid }}.Debug.flatpak \
+          flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 --runtime ${{ matrix.app.appid }}.Debug master
+            --arch=x86_64 --runtime ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
 
       - name: Build signed
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -133,14 +145,15 @@ jobs:
             --install-deps-from=flathub --force-clean --gpg-sign=dc812d3cb7855746 \
             --default-branch=master --arch=x86_64 flatpak_app ${{ matrix.app.manifest }}
 
-          flatpak build-bundle repo ${{ matrix.app.appid }}.flatpak \
+          flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 --gpg-sign=dc812d3cb7855746 ${{ matrix.app.appid }} master
+            --arch=x86_64 --gpg-sign=dc812d3cb7855746 \
+            ${{ matrix.app.appid }} ${{ matrix.app.branch }}
 
-          flatpak build-bundle repo ${{ matrix.app.appid }}.Debug.flatpak \
+          flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
             --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
             --arch=x86_64 --gpg-sign=dc812d3cb7855746 --runtime \
-            ${{ matrix.app.appid }}.Debug master
+            ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
 
       - name: Prune debuginfo from repo
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -155,23 +168,23 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: repo
-          name: ${{ matrix.app.appid }}_repo_artifact
+          name: ${{ matrix.app.dirname }}_repo_artifact
           retention-days: 1
           compression-level: 0
 
       - name: Upload bundle
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app.appid }}-bundle
-          path: ${{ matrix.app.appid }}.flatpak
+          name: ${{ matrix.app.dirname }}-bundle
+          path: ${{ matrix.app.dirname }}.flatpak
           retention-days: 1
           compression-level: 0
 
       - name: Upload debuginfo
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app.appid }}-bundle.Debug
-          path: ${{ matrix.app.appid }}.Debug.flatpak
+          name: ${{ matrix.app.dirname }}-bundle.Debug
+          path: ${{ matrix.app.dirname }}.Debug.flatpak
           retention-days: 3
           compression-level: 0
 
