@@ -1,6 +1,6 @@
 id: dog.unix.cantata.Cantata
 runtime: org.kde.Platform
-runtime-version: "6.9"
+runtime-version: '6.9'
 sdk: org.kde.Sdk
 command: cantata.sh
 finish-args:
@@ -14,9 +14,9 @@ finish-args:
   - --talk-name=org.kde.StatusNotifierWatcher
 
 cleanup:
-  - "*.a"
-  - "*.la"
-  - "*.prl"
+  - '*.a'
+  - '*.la'
+  - '*.prl'
   - /doc
   - /include
   - /lib/cmake
@@ -35,7 +35,7 @@ cleanup:
 modules:
   - name: nlohmann_json
     cleanup:
-      - "*"
+      - '*'
     buildsystem: cmake-ninja
     builddir: true
     config-opts:
@@ -146,8 +146,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/MusicPlayerDaemon/MPD.git
-        tag: v0.24.3
-        commit: 063abb31a68f7ee92a246256eec4234ab8b7ed8b
+        tag: v0.24.4
+        commit: 72077d76f11ffba21f6705fe912f47b0b5dc1d6e
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
