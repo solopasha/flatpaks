@@ -200,7 +200,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "6d2d177f0761a9e2c091160d559a00abd89473ca",
+                    "commit": "d7d25266d982f4eb62bf29884a0624d2fe895d46",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
