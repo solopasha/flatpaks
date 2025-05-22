@@ -8,7 +8,7 @@
  <summary>A free, open source, and cross-platform media player</summary>
  <launchable type="desktop-id">io.mpv.Mpv.desktop</launchable>
  <translation type="gettext">mpv</translation>
- <content_rating type="oars-1.1" />
+ <content_rating type="oars-1.1"/>
  <description>
   <p>
    Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety
@@ -30,6 +30,9 @@ output methods are supported.
   </ul>
  </description>
  <releases>
+  <release version="2025.05.22" date="2025-05-22">
+   <description></description>
+  </release>
   <release date="2025-03-25" version="v0.40.0">
    <description>
     <p>
