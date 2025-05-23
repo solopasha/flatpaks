@@ -9,6 +9,8 @@ on:
   push:
     paths-ignore:
       - '.github/workflows/*'
+    branches:
+      - master
   pull_request:
 
 jobs:
