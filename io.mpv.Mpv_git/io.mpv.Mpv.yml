@@ -319,6 +319,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
+          versions: { '==': 7.349.0 }
 
   - name: vapoursynth
     config-opts:
