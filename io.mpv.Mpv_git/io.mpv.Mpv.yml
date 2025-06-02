@@ -326,8 +326,8 @@ modules:
       - --with-python-prefix=${FLATPAK_DEST}
     sources:
       - type: archive
-        url: https://github.com/vapoursynth/vapoursynth/archive/R71.tar.gz
-        sha256: c56d6de16d0a24db7eee1bd5e633229b0bd8a746eafcfe41945a22f9d44f8bd6
+        url: https://github.com/vapoursynth/vapoursynth/archive/R72.tar.gz
+        sha256: 650f77feebfd08842b521273f59e0c88f7ba9d7cb5f151d89b79b8dfdd4ce633
         x-checker-data:
           type: anitya
           project-id: 15982
@@ -472,7 +472,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: 730062b5103f40cbd90af27f54e35705548a1cb1
+        commit: 6b178e4f5a1d0dcc7b4cdb04ffad2827d07ef4d4
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
