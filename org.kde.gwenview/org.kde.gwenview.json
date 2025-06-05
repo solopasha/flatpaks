@@ -287,6 +287,9 @@
                         "timestamp-query": "first( .[].committed_date )"
                     }
                 }
+            ],
+            "post-install": [
+                "sed '/Categories=/s/KDE;//' -i ${FLATPAK_DEST}/share/applications/org.kde.gwenview.desktop"
             ]
         }
     ]
