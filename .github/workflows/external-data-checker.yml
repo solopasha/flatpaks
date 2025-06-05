@@ -9,15 +9,15 @@ jobs:
     name: Collect list of Flatpak manifests
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     outputs:
       manifests: ${{ steps.get-manifests.outputs.manifests }}
 
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        persist-credentials: false
+
     - id: get-manifests
       run: |
         MANIFESTS=$(find . -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \) | jq -R -s -c 'split("\n")[:-1]')
@@ -35,9 +35,14 @@ jobs:
       matrix:
         manifest: ${{ fromJson(needs.build-matrix.outputs.manifests) }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.WORKFLOW_TOKEN }}
+
     - uses: docker://ghcr.io/flathub/flatpak-external-data-checker:latest
       env:
         GIT_AUTHOR_NAME: Flatpak External Data Checker
