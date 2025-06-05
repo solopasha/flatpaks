@@ -244,9 +244,6 @@
                 "-DBUILD_TESTING=OFF",
                 "-DCMAKE_VERBOSE_MAKEFILE=ON"
             ],
-            "post-install": [
-                "echo $CXXFLAGS"
-            ],
             "sources": [
                 {
                     "type": "git",
