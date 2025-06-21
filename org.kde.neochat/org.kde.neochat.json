@@ -154,7 +154,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/quotient-im/libQuotient.git",
-                    "commit": "72f1eedec1ed9472a93a712f2b047b9d832a2ea6",
+                    "commit": "ba66f7383099bb8ac66794c3b45a8312c464c917",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/quotient-im/libQuotient/commits",
@@ -200,7 +200,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "31720ac33048c71c37d6387548f0c22b908b752e",
+                    "commit": "68581c540ec1db7b07ee0ccc009ce2ce7e62ea90",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
