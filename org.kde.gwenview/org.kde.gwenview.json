@@ -279,7 +279,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/graphics/gwenview",
-                    "commit": "c147f7c13592a173e83f5841244ccee948c7c00e",
+                    "commit": "8a102a2ccb98bdc462d3c93e36f229c8d23a43f5",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/graphics%2Fgwenview/repository/commits",
