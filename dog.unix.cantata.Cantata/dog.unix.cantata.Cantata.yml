@@ -102,8 +102,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/MusicPlayerDaemon/libmpdclient.git
-        tag: v2.22
-        commit: 7dd449e936a3f25d54d0a5bad798fc06e2a55aa9
+        tag: v2.23
+        commit: 5a7579bff3e9e3f55c161e5270403ad8c090ad2c
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
