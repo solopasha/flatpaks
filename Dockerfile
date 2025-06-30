@@ -27,6 +27,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
         tar \
         zstd && \
     dnf clean all && \
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
     useradd -m -u 1001 builduser
 
 WORKDIR /home/builduser
