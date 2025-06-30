@@ -87,26 +87,20 @@ jobs:
     permissions:
       contents: read
     container:
-      image: registry.fedoraproject.org/fedora:latest
+      image: ghcr.io/solopasha/flatpaks/buildroot:latest
       options: --privileged
     strategy:
       matrix: ${{fromJson(needs.builds.outputs.matrix)}}
       fail-fast: false
 
     steps:
-      - name: Prepare
-        run: |
-          dnf -y up && dnf -y install --setopt=install_weak_deps=False \
-            ccache \
-            flatpak-builder \
-            git-core \
-            patch \
-            zstd
-          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
       - uses: actions/checkout@v4
         with:
           submodules: 'true'
+
+      - name: Prepare
+        run: |
+          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
       - name: Restore cache
         id: cache
@@ -153,6 +147,7 @@ jobs:
           fi
 
           flatpak-builder \
+            --user \
             --arch=x86_64 \
             --ccache \
             --default-branch=master \
