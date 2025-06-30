@@ -9,6 +9,7 @@ on:
   push:
     paths-ignore:
       - '.github/workflows/*'
+      - 'Dockerfile'
     branches:
       - master
   pull_request:
