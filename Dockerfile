@@ -27,7 +27,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
         zstd && \
     dnf clean all && \
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-    useradd -M -u 1001 builduser && \
+    useradd -m -u 1001 builduser && \
     mkdir /build && \
     chown builduser:builduser /build && \
     setcap cap_setuid=ep /usr/bin/newuidmap && \

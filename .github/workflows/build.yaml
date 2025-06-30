@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Get changed manifests
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -94,6 +95,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: 'true'
+          persist-credentials: false
 
       - name: Restore cache
         id: cache
@@ -261,6 +263,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Cache repo
         id: cache
