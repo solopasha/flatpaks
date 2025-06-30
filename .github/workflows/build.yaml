@@ -176,8 +176,6 @@ jobs:
       - name: Bundles
         run: |
           docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
             --cap-drop all \
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}:/work" \
@@ -200,8 +198,6 @@ jobs:
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
             --cap-drop all \
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}:/work" \
