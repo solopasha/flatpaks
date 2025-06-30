@@ -86,9 +86,6 @@ jobs:
     needs: builds
     permissions:
       contents: read
-    container:
-      image: ghcr.io/solopasha/flatpaks/buildroot:latest
-      options: --privileged
     strategy:
       matrix: ${{fromJson(needs.builds.outputs.matrix)}}
       fail-fast: false
@@ -98,89 +95,122 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Prepare
-        run: |
-          flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
       - name: Restore cache
         id: cache
         uses: actions/cache/restore@v4
         with:
           path: .flatpak-builder
-          key: ${{ matrix.app.appid }}-${{ hashFiles(format('{0}', matrix.app.appid)) }}
-          restore-keys: ${{ matrix.app.appid }}-
+          key: ${{ matrix.app.dirname }}-${{ hashFiles(format('{0}', matrix.app.dirname)) }}
+          restore-keys: ${{ matrix.app.dirname }}-
 
-      - name: Key
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        env:
-          GPGKEY: ${{ secrets.GPGKEY }}
+      - name: Enable unprivileged user namespaces
         run: |
-          echo "$GPGKEY" > ${{ github.repository_owner }}.private
-          gpg --import ${{ github.repository_owner }}.private
-          rm ${{ github.repository_owner }}.private
+          sudo aa-teardown >/dev/null 2>&1 || true
+          sudo systemctl disable --now apparmor.service >/dev/null 2>&1
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_unconfined=0
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Download sources
         run: |
-          max_retries=5
-          sleep_seconds=7
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            -v /proc:/host/proc \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              max_retries=5
+              sleep_seconds=7
 
-          for (( retry_count=0; retry_count<max_retries; retry_count++ )); do
-              if flatpak-builder --force-clean --sandbox --download-only builddir ${{ matrix.app.manifest }}; then
-                  exit 0
-              fi
+              for (( retry_count=0; retry_count<max_retries; retry_count++ )); do
+                  if flatpak-builder --force-clean --sandbox --download-only builddir ${{ matrix.app.manifest }}; then
+                      exit 0
+                  fi
 
-              if [[ $retry_count -lt $((max_retries - 1)) ]]; then
-                  echo "Attempt $((retry_count + 1)) failed. Retrying in $sleep_seconds seconds..."
-                  sleep $sleep_seconds
-              fi
-          done
+                  if [[ $retry_count -lt $((max_retries - 1)) ]]; then
+                      echo "Attempt $((retry_count + 1)) failed. Retrying in $sleep_seconds seconds..."
+                      sleep $sleep_seconds
+                  fi
+              done
 
-          echo "Failed after $max_retries attempts"
-          exit 1
+              echo "Failed after $max_retries attempts"
+              exit 1
+            '
 
       - name: Build
         run: |
-          if [[ ${{ github.event_name }} == "push" || ${{ github.event_name }} == "workflow_dispatch" ]]; then
-            gpgsign="--gpg-sign=${{ vars.FINGERPRINT }}"
-          else
-            gpgsign=""
-          fi
+          mkdir -p ${GITHUB_WORKSPACE}/flatpak
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            -v /proc:/host/proc \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -v "${GITHUB_WORKSPACE}/flatpak:/home/builduser/.local/share/flatpak" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+              git config --global --add safe.directory "*"
+              flatpak-builder \
+                --user \
+                --arch=x86_64 \
+                --ccache \
+                --default-branch=master \
+                --delete-build-dirs \
+                --disable-download \
+                --disable-rofiles-fuse \
+                --force-clean \
+                --install-deps-from=flathub \
+                --repo=repo \
+                --sandbox \
+                builddir ${{ matrix.app.manifest }}
+            '
 
-          flatpak-builder \
-            --user \
-            --arch=x86_64 \
-            --ccache \
-            --default-branch=master \
-            --delete-build-dirs \
-            --disable-download \
-            --disable-rofiles-fuse \
-            --force-clean \
-            --install-deps-from=flathub \
-            --repo=repo \
-            --sandbox \
-            $gpgsign \
-            builddir ${{ matrix.app.manifest }}
+      - name: Bundles
+        run: |
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                ${{ matrix.app.appid }} ${{ matrix.app.branch }}
 
-          flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
-            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 \
-            $gpgsign \
-            ${{ matrix.app.appid }} ${{ matrix.app.branch }}
-
-          flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
-            --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-            --arch=x86_64 \
-            $gpgsign \
-            --runtime \
-            ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
+              flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                --runtime \
+                ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
+            '
 
       - name: Prune debuginfo from repo
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
-          for ref in $(ostree refs --repo=repo | grep '^runtime.*Debug'); do
-              ostree refs --repo=repo --delete "$ref"
-          done
-          flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              for ref in $(ostree refs --repo=repo | grep '^runtime.*Debug'); do
+                  ostree refs --repo=repo --delete "$ref"
+              done
+              flatpak build-update-repo --generate-static-deltas --prune repo/
+            '
 
       - name: Upload repo as artifact
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -215,15 +245,12 @@ jobs:
           path: .flatpak-builder
           key: ${{ steps.cache.outputs.cache-primary-key }}
 
-  deploy:
+  repo:
     if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
     needs: flatpak
     permissions:
       pages: write
       id-token: write
-    container:
-      image: registry.fedoraproject.org/fedora:latest
-      options: --privileged
     concurrency:
       group: repo-update
       cancel-in-progress: false
@@ -233,25 +260,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare
-        run: |
-          dnf -y up && dnf -y install --setopt=install_weak_deps=False \
-            ccache \
-            flatpak-builder \
-            git-core \
-            patch \
-            zstd
-          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-      - name: Key
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        env:
-          GPGKEY: ${{ secrets.GPGKEY }}
-        run: |
-          echo "$GPGKEY" > ${{ github.repository_owner }}.private
-          gpg --import ${{ github.repository_owner }}.private
-          rm ${{ github.repository_owner }}.private
-
       - uses: actions/checkout@v4
 
       - name: Cache repo
@@ -262,16 +270,29 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
+      - name: Create work directory
+        if: steps.cache.outputs.cache-hit == ''
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/repo
+
       - name: Download repo
         if: steps.cache.outputs.cache-hit == ''
         run: |
-          mkdir repo
-          pushd repo
-          ostree init --repo . --mode=archive-z2
-          ostree remote add ${{ github.repository_owner }} \
-            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} \
-            --gpg-import=../RPM-GPG-KEY-${{ github.repository_owner }}
-          ostree pull --disable-fsync --mirror ${{ github.repository_owner }}
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            -v "${GITHUB_WORKSPACE}/repo:/work/repo" \
+            -w /work/repo \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              ostree init --repo . --mode=archive-z2
+              ostree remote add ${{ github.repository_owner }} \
+                https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} \
+                --gpg-import=../RPM-GPG-KEY-${{ github.repository_owner }}
+              ostree pull --disable-fsync --mirror ${{ github.repository_owner }}
+            '
 
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
@@ -293,9 +314,25 @@ jobs:
           EOF
 
       - name: Update repo metadata
+        env:
+          GPGKEY: ${{ secrets.gpgkey }}
         run: |
-          mkdir -p repo/refs/remotes
-          flatpak build-update-repo --generate-static-deltas --prune repo/ --gpg-sign=dc812d3cb7855746
+          docker run --rm \
+            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
+            --security-opt apparmor=unconfined \
+            --cap-drop all \
+            --entrypoint="" \
+            --tmpfs /home/builduser/.gnupg:uid=1001,gid=1001,mode=0700 \
+            -e GPGKEY \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              mkdir -p repo/refs/remotes
+              echo "${GPGKEY}" | gpg --import
+              flatpak build-sign repo --gpg-sign=dc812d3cb7855746
+              flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
+            '
 
       - name: Upload repo
         uses: actions/upload-pages-artifact@v3
