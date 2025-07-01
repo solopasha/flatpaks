@@ -1,99 +1,49 @@
-name: Build and push
+name: Build and push runtime
 
 on:
   workflow_dispatch:
-    inputs:
-      appids:
-        type: string
-        description: app IDs to build
   push:
-    paths-ignore:
-      - '.github/workflows/*'
-      - 'Dockerfile'
+    paths:
       - 'org.kde.Sdk/**'
     branches:
       - master
   pull_request:
 
 jobs:
-  builds:
-    name: Assemble build matrix
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      matrix: ${{ steps.builds.outputs.matrix }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Get changed manifests
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
-        id: changed_files
-        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
-        with:
-          files: |
-            */*.yml
-            */*.yaml
-            */*.json
-          files_ignore: 'org.kde.Sdk/**'
-
-      - name: Assemble build matrix
-        id: builds
-        run: |
-          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
-            IFS=' ' read -r -a APPS <<< "${{ steps.changed_files.outputs.all_changed_files }}"
-            echo "Building changed manifests: ${APPS[@]}"
-          elif [[ "${{ inputs.appids }}" != "" ]]; then
-            APPS_TO_BUILD=(${{ inputs.appids }})
-            declare -a APPS=()
-            for appid in "${APPS_TO_BUILD[@]}"; do
-              APPS+=($(find . -maxdepth 2 \( -iname "${appid}.yaml" -o -iname "${appid}.yml" -o -iname "${appid}.json" \)))
-            done
-            echo "Building specified apps: $APPS"
-          else
-            mapfile -t APPS < <(find . -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \))
-            echo -e "Building all apps:\n$APPS"
-          fi
-
-          APPS_JSON='{"app": []}'
-          for manifest in "${APPS[@]}"; do
-            APPID=$(basename ${manifest%.*})
-            DIRNAME=$(dirname ${manifest#./})
-            case "$manifest" in
-              *.json)
-                BRANCH=$(jq -r '.branch // "master"' "$manifest")
-                ;;
-              *.yml|*.yaml)
-                BRANCH=$(yq '.branch // "master"' "$manifest")
-                ;;
-              *)
-                exit 1
-                ;;
-            esac
-            APPS_JSON=$(jq -c --arg appid "$APPID" --arg manifest "$manifest" \
-              --arg dirname "$DIRNAME" --arg branch "$BRANCH" \
-              '.app += [{"appid": $appid, "manifest": $manifest, "dirname": $dirname, "branch": $branch}]' <<< "$APPS_JSON")
-          done
-          echo "$APPS_JSON"
-
-          echo "matrix=$APPS_JSON" >> $GITHUB_OUTPUT
-
   flatpak:
-    name: ${{ matrix.app.dirname }} build
+    name: org.kde.Sdk build
     runs-on: ubuntu-latest
-    needs: builds
     permissions:
       contents: read
-    strategy:
-      matrix: ${{fromJson(needs.builds.outputs.matrix)}}
-      fail-fast: false
-
     steps:
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /opt/ghc /usr/local/.ghcup || true
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/gradle-*
+          sudo rm -rf /usr/local/julia* /usr/share/java /usr/share/kotlinc
+          sudo rm -rf /opt/az /opt/microsoft /opt/pipx
+          sudo rm -rf /usr/share/miniconda /home/runner/.rustup /home/packer/.rustup /home/runneradmin/.rustup
+          sudo rm -rf /etc/skel/.rustup /opt/google-cloud-sdk
+          sudo rm -rf /usr/share/az_* /opt/google /usr/lib/firefox /usr/local/aws-*
+          sudo rm -rf /usr/libexec/gcc /opt/actionarchivecache
+          sudo rm -rf /var/lib/mysql /usr/local/n
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet /usr/share/swift
+          sudo rm -rf /usr/local/share/boost /usr/local/share/powershell
+          sudo rm -rf /usr/lib/google-cloud-sdk /usr/lib/jvm
+          sudo rm -rf /usr/local/graalvm /usr/local/share/chromium
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/lib/dotnet /usr/lib/php /usr/share/mysql
+          sudo rm -rf /usr/lib/llvm-*
+          sudo rm -rf /usr/lib/mono
+          sudo apt purge -y \
+            firefox \
+            google-chrome-stable \
+            microsoft-edge-stable
+          sudo apt-get clean || true
+          sudo rm -rf /var/lib/apt/lists/*
+
       - uses: actions/checkout@v4
         with:
           submodules: 'true'
@@ -104,8 +54,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .flatpak-builder
-          key: ${{ matrix.app.dirname }}-${{ hashFiles(format('{0}', matrix.app.dirname)) }}
-          restore-keys: ${{ matrix.app.dirname }}-
+          key: org.kde.Sdk-${{ hashFiles('org.kde.Sdk') }}
+          restore-keys: org.kde.Sdk-
 
       - name: Enable unprivileged user namespaces
         run: |
@@ -130,7 +80,7 @@ jobs:
               sleep_seconds=7
 
               for (( retry_count=0; retry_count<max_retries; retry_count++ )); do
-                  if flatpak-builder --force-clean --sandbox --download-only builddir ${{ matrix.app.manifest }}; then
+                  if flatpak-builder --force-clean --sandbox --download-only builddir org.kde.Sdk/org.kde.Sdk.json; then
                       exit 0
                   fi
 
@@ -160,7 +110,7 @@ jobs:
             /bin/bash -c '
               flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
               git config --global --add safe.directory "*"
-              flatpak-builder \
+              flatpak-builder -v \
                 --user \
                 --arch=x86_64 \
                 --ccache \
@@ -172,7 +122,7 @@ jobs:
                 --install-deps-from=flathub \
                 --repo=repo \
                 --sandbox \
-                builddir ${{ matrix.app.manifest }}
+                builddir org.kde.Sdk/org.kde.Sdk.json
             '
 
       - name: Bundles
@@ -184,57 +134,35 @@ jobs:
             -w /work \
             ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
-              flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
-                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
-                --arch=x86_64 \
-                ${{ matrix.app.appid }} ${{ matrix.app.branch }}
-
-              flatpak build-bundle repo ${{ matrix.app.dirname }}.Debug.flatpak \
+              flatpak build-bundle repo platform.flatpak \
                 --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
                 --arch=x86_64 \
                 --runtime \
-                ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
+                --oci \
+                org.kde.Platform solopasha
+
+              flatpak build-bundle repo sdk.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                --runtime \
+                --oci \
+                org.kde.Sdk solopasha
             '
 
-      - name: Prune debuginfo from repo
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: |
-          docker run --rm \
-            --cap-drop all \
-            --entrypoint="" \
-            -v "${GITHUB_WORKSPACE}:/work" \
-            -w /work \
-            ghcr.io/solopasha/flatpaks/buildroot:latest \
-            /bin/bash -c '
-              for ref in $(ostree refs --repo=repo | grep '^runtime.*Debug'); do
-                  ostree refs --repo=repo --delete "$ref"
-              done
-              flatpak build-update-repo --generate-static-deltas --prune repo/
-            '
-
-      - name: Upload repo as artifact
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Upload platform
         uses: actions/upload-artifact@v4
         with:
-          path: repo
-          name: ${{ matrix.app.dirname }}_repo_artifact
+          name: platform.flatpak
+          path: platform.flatpak
           retention-days: 1
           compression-level: 0
 
-      - name: Upload bundle
+      - name: Upload sdk
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app.dirname }}-bundle
-          path: ${{ matrix.app.dirname }}.flatpak
+          name: sdk.flatpak
+          path: sdk.flatpak
           retention-days: 1
-          compression-level: 0
-
-      - name: Upload debuginfo
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.app.dirname }}-bundle.Debug
-          path: ${{ matrix.app.dirname }}.Debug.flatpak
-          retention-days: 3
           compression-level: 0
 
       - name: Save cache
@@ -245,19 +173,53 @@ jobs:
           path: .flatpak-builder
           key: ${{ steps.cache.outputs.cache-primary-key }}
 
-  repo:
+  publish-oci:
     if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
     needs: flatpak
     permissions:
-      pages: write
-      id-token: write
+      packages: write
+
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/solopasha/flatpaks/buildroot:latest
+      options: --tmpfs /run/containers:uid=1001,gid=1001,mode=0700
+    steps:
+      - name: Download platform
+        uses: actions/download-artifact@v4
+        with:
+          name: platform.flatpak
+          path: platform.flatpak
+
+      - name: Download sdk
+        uses: actions/download-artifact@v4
+        with:
+          name: sdk.flatpak
+          path: sdk.flatpak
+
+      - name: Login
+        run: |
+          skopeo login --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" ghcr.io
+
+      - name: Push
+        run: |
+          skopeo copy \
+            oci:platform.flatpak \
+            docker://ghcr.io/${{ github.repository }}/platform:latest
+
+          skopeo copy \
+            oci:sdk.flatpak \
+            docker://ghcr.io/${{ github.repository }}/sdk:latest
+
+  repo:
+    if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
+    needs:
+      - flatpak
+      - publish-oci
+    permissions:
+      contents: read
     concurrency:
       group: repo-update
       cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -296,13 +258,6 @@ jobs:
               ostree pull --disable-fsync --mirror ${{ github.repository_owner }}
             '
 
-      - name: Grab build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: "*_repo_artifact"
-          path: repo
-          merge-multiple: true
-
       - name: flatpakrepo
         run: |
           cat << EOF > repo/index.flatpakrepo
@@ -336,11 +291,35 @@ jobs:
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
             '
 
+      - name: Update static index
+        run: |
+          mkdir repo/index
+          JSON='{"Registry":"https://ghcr.io/","Results":[]}'
+          for manifest in sdk platform; do
+            DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"
+            JSON=$(jq --argjson docker "$DOCKER" '.Results += [ $docker ]' <<< "$JSON" )
+          done
+          echo "$JSON" > repo/index/static
+
       - name: Upload repo
         uses: actions/upload-pages-artifact@v3
         with:
           path: repo/
 
+  deploy:
+    if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
+    needs: repo
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: repo-update
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
