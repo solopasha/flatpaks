@@ -259,6 +259,7 @@ jobs:
             '
 
       - name: flatpakrepo
+        if: steps.cache.outputs.cache-hit == ''
         run: |
           cat << EOF > repo/index.flatpakrepo
           [Flatpak Repo]
@@ -269,27 +270,6 @@ jobs:
           Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
           GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
           EOF
-
-      - name: Update repo metadata
-        env:
-          GPGKEY: ${{ secrets.gpgkey }}
-        run: |
-          docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
-            --cap-drop all \
-            --entrypoint="" \
-            --tmpfs /home/builduser/.gnupg:uid=1001,gid=1001,mode=0700 \
-            -e GPGKEY \
-            -v "${GITHUB_WORKSPACE}:/work" \
-            -w /work \
-            ghcr.io/solopasha/flatpaks/buildroot:latest \
-            /bin/bash -c '
-              mkdir -p repo/refs/remotes
-              echo "${GPGKEY}" | gpg --import
-              flatpak build-sign repo --gpg-sign=dc812d3cb7855746
-              flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
-            '
 
       - name: Update static index
         run: |
