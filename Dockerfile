@@ -34,6 +34,7 @@ RUN rm /etc/yum.repos.d/fedora-cisco-openh264.repo && \
         ccache \
         flatpak-builder \
         git-core \
+        jq \
         patch \
         skopeo \
         tar \
