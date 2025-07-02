@@ -166,8 +166,6 @@ jobs:
             /bin/bash -c '
               flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
               flatpak remote-add --user --if-not-exists oci oci+https://solopasha.github.io/flatpaks
-              flatpak --user remote-ls oci
-              flatpak --user install -y --noninteractive oci org.kde.Sdk/x86_64/solopasha
               git config --global --add safe.directory "*"
               dbus-run-session -- flatpak-builder \
                 --user \
