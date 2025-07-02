@@ -1,7 +1,7 @@
 {
     "id": "org.kde.neochat",
     "runtime": "org.kde.Platform",
-    "runtime-version": "6.9",
+    "runtime-version": "solopasha",
     "sdk": "org.kde.Sdk",
     "command": "neochat",
     "rename-icon": "org.kde.neochat",
@@ -183,6 +183,27 @@
                         "project-id": 229033,
                         "stable-only": true,
                         "url-template": "https://download.kde.org/stable/kquickimageeditor/kquickimageeditor-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kirigami",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DBUILD_TESTING=OFF"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/frameworks/kirigami.git",
+                    "commit": "9afe6240ac233899989bd03a11de90333e185cbe",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/frameworks%2Fkirigami/repository/commits",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
                     }
                 }
             ]
