@@ -20,7 +20,7 @@ jobs:
 
     - id: get-manifests
       run: |
-        MANIFESTS=$(find . -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \) | jq -R -s -c 'split("\n")[:-1]')
+        MANIFESTS=$(find . -mindepth 2 -maxdepth 2 \( -iname "*.yaml" -o -iname "*.yml" -o -iname "*.json" \) | jq -R -s -c 'split("\n")[:-1]')
         echo "manifests=$MANIFESTS" >> $GITHUB_OUTPUT
         echo "::group::Manifests found"
         echo $MANIFESTS | jq
