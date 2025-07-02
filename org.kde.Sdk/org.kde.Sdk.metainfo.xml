@@ -10,4 +10,9 @@
   <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=Qt%2FKDE%20Flatpak%20Runtime</url>
   <project_group>KDE</project_group>
   ​<update_contact>kde-devel@kde.org</update_contact>
+  ​<releases>
+    <release version="6.4.2" date="2025-07-02">
+      <description></description>
+    </release>
+  </releases>
 </component>
