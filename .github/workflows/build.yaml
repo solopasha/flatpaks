@@ -165,8 +165,9 @@ jobs:
             ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+              flatpak remote-add --user --if-not-exists oci oci+https://solopasha.github.io/flatpaks
               git config --global --add safe.directory "*"
-              flatpak-builder \
+              dbus-run-session -- flatpak-builder \
                 --user \
                 --arch=x86_64 \
                 --ccache \
