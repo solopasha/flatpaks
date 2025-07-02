@@ -204,7 +204,7 @@ jobs:
                 --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
                 --arch=x86_64 \
                 --runtime \
-                ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
+                ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }} || :
             '
 
       - name: Upload bundle
@@ -214,6 +214,7 @@ jobs:
           path: ${{ matrix.app.dirname }}.flatpak
           retention-days: 1
           compression-level: 0
+          if-no-files-found: error
 
       - name: Upload debuginfo
         uses: actions/upload-artifact@v4
@@ -222,6 +223,7 @@ jobs:
           path: ${{ matrix.app.dirname }}.Debug.flatpak
           retention-days: 1
           compression-level: 0
+          if-no-files-found: ignore
 
       - name: Save cache
         id: cache-save
