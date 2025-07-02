@@ -231,22 +231,11 @@ jobs:
   repo:
     if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
     needs: flatpak
-    permissions:
-      pages: write
-      id-token: write
     concurrency:
       group: repo-update
       cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
       - name: Cache repo
         id: cache
         uses: actions/cache@v4
@@ -311,7 +300,7 @@ jobs:
             /bin/bash -c '
               mkdir -p repo/refs/remotes
               echo "${GPGKEY}" | gpg --import
-              for bundle in *.flatpak; do
+              for bundle in ./*-bundle/*.flatpak; do
                 flatpak build-import-bundle repo "$bundle" --gpg-sign=dc812d3cb7855746 --update-appstream || exit 1
               done
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
@@ -322,6 +311,20 @@ jobs:
         with:
           path: repo/
 
+  deploy:
+    if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
+    needs: repo
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: repo-update
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
