@@ -277,7 +277,7 @@ jobs:
 
       - name: Update static index
         run: |
-          mkdir repo/index
+          mkdir -p repo/index
           JSON='{"Registry":"https://ghcr.io/","Results":[]}'
           for manifest in sdk platform; do
             DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"

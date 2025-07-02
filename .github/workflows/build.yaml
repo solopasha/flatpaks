@@ -273,18 +273,6 @@ jobs:
         with:
           pattern: "*-bundle"
 
-      - name: flatpakrepo
-        run: |
-          cat << EOF > repo/index.flatpakrepo
-          [Flatpak Repo]
-          Title=${{ github.repository }}
-          Url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-          Homepage=${{ github.repositoryUrl }}
-          Description=${{ github.repository }}
-          Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
-          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
-          EOF
-
       - name: Import bundle
         env:
           GPGKEY: ${{ secrets.gpgkey }}
@@ -305,6 +293,19 @@ jobs:
               done
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
             '
+
+      - name: flatpakrepo
+        if: steps.cache.outputs.cache-hit == ''
+        run: |
+          cat << EOF > repo/index.flatpakrepo
+          [Flatpak Repo]
+          Title=${{ github.repository }}
+          Url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          Homepage=${{ github.repositoryUrl }}
+          Description=${{ github.repository }}
+          Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
+          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
+          EOF
 
       - name: Upload repo
         uses: actions/upload-pages-artifact@v3
