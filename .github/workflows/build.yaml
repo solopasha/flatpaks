@@ -101,7 +101,6 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.builds.outputs.matrix)}}
       fail-fast: false
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -236,6 +235,8 @@ jobs:
   repo:
     if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
     needs: flatpak
+    permissions:
+      contents: read
     concurrency:
       group: repo-update
       cancel-in-progress: false
@@ -249,29 +250,38 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
-      - name: Create work directory
+      - uses: actions/checkout@v4
         if: steps.cache.outputs.cache-hit == ''
-        run: |
-          mkdir -p ${GITHUB_WORKSPACE}/repo
 
       - name: Download repo
         if: steps.cache.outputs.cache-hit == ''
         run: |
           docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
             --cap-drop all \
             --entrypoint="" \
-            -v "${GITHUB_WORKSPACE}/repo:/work/repo" \
-            -w /work/repo \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
             ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
-              ostree init --repo . --mode=archive-z2
+              ostree init --repo repo --mode=archive-z2
               ostree remote add ${{ github.repository_owner }} \
                 https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} \
-                --gpg-import=../RPM-GPG-KEY-${{ github.repository_owner }}
-              ostree pull --disable-fsync --mirror ${{ github.repository_owner }}
+                --gpg-import=./RPM-GPG-KEY-${{ github.repository_owner }} --repo repo
+              ostree pull --disable-fsync --mirror ${{ github.repository_owner }} --repo repo
             '
+
+      - name: flatpakrepo
+        if: steps.cache.outputs.cache-hit == ''
+        run: |
+          cat << EOF > repo/index.flatpakrepo
+          [Flatpak Repo]
+          Title=${{ github.repository }}
+          Url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          Homepage=${{ github.repositoryUrl }}
+          Description=${{ github.repository }}
+          Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
+          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
+          EOF
 
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
@@ -298,19 +308,6 @@ jobs:
               done
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
             '
-
-      - name: flatpakrepo
-        if: steps.cache.outputs.cache-hit == ''
-        run: |
-          cat << EOF > repo/index.flatpakrepo
-          [Flatpak Repo]
-          Title=${{ github.repository }}
-          Url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-          Homepage=${{ github.repositoryUrl }}
-          Description=${{ github.repository }}
-          Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
-          GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
-          EOF
 
       - name: Upload repo
         uses: actions/upload-pages-artifact@v3

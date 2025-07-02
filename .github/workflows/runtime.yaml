@@ -186,7 +186,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/solopasha/flatpaks/buildroot:latest
-      options: --tmpfs /run/containers:uid=1001,gid=1001,mode=0700
+      options: --tmpfs /run/containers:uid=1001,gid=1001,mode=0700 --cap-drop all
     steps:
       - name: Download platform
         uses: actions/download-artifact@v4
@@ -234,10 +234,8 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
-      - name: Create work directory
+      - uses: actions/checkout@v4
         if: steps.cache.outputs.cache-hit == ''
-        run: |
-          mkdir -p ${GITHUB_WORKSPACE}/repo
 
       - name: Download repo
         if: steps.cache.outputs.cache-hit == ''
@@ -245,15 +243,15 @@ jobs:
           docker run --rm \
             --cap-drop all \
             --entrypoint="" \
-            -v "${GITHUB_WORKSPACE}/repo:/work/repo" \
-            -w /work/repo \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
             ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
-              ostree init --repo . --mode=archive-z2
+              ostree init --repo repo --mode=archive-z2
               ostree remote add ${{ github.repository_owner }} \
                 https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} \
-                --gpg-import=../RPM-GPG-KEY-${{ github.repository_owner }}
-              ostree pull --disable-fsync --mirror ${{ github.repository_owner }}
+                --gpg-import=./RPM-GPG-KEY-${{ github.repository_owner }} --repo repo
+              ostree pull --disable-fsync --mirror ${{ github.repository_owner }} --repo repo
             '
 
       - name: flatpakrepo
