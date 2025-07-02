@@ -226,10 +226,6 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
       - name: Cache repo
         id: cache
         uses: actions/cache@v4
@@ -247,8 +243,6 @@ jobs:
         if: steps.cache.outputs.cache-hit == ''
         run: |
           docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
             --cap-drop all \
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}/repo:/work/repo" \
