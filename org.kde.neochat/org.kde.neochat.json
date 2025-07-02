@@ -1,7 +1,7 @@
 {
     "id": "org.kde.neochat",
     "runtime": "org.kde.Platform",
-    "runtime-version": "solopasha",
+    "runtime-version": "6.9",
     "sdk": "org.kde.Sdk",
     "command": "neochat",
     "rename-icon": "org.kde.neochat",

@@ -204,31 +204,6 @@ jobs:
                 ${{ matrix.app.appid }}.Debug ${{ matrix.app.branch }}
             '
 
-      - name: Prune debuginfo from repo
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: |
-          docker run --rm \
-            --cap-drop all \
-            --entrypoint="" \
-            -v "${GITHUB_WORKSPACE}:/work" \
-            -w /work \
-            ghcr.io/solopasha/flatpaks/buildroot:latest \
-            /bin/bash -c '
-              for ref in $(ostree refs --repo=repo | grep '^runtime.*Debug'); do
-                  ostree refs --repo=repo --delete "$ref"
-              done
-              flatpak build-update-repo --generate-static-deltas --prune repo/
-            '
-
-      - name: Upload repo as artifact
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          path: repo
-          name: ${{ matrix.app.dirname }}_repo_artifact
-          retention-days: 1
-          compression-level: 0
-
       - name: Upload bundle
         uses: actions/upload-artifact@v4
         with:
@@ -240,9 +215,9 @@ jobs:
       - name: Upload debuginfo
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app.dirname }}-bundle.Debug
+          name: ${{ matrix.app.dirname }}.Debug
           path: ${{ matrix.app.dirname }}.Debug.flatpak
-          retention-days: 3
+          retention-days: 1
           compression-level: 0
 
       - name: Save cache
@@ -307,9 +282,7 @@ jobs:
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: "*_repo_artifact"
-          path: repo
-          merge-multiple: true
+          pattern: "*-bundle"
 
       - name: flatpakrepo
         run: |
@@ -323,13 +296,11 @@ jobs:
           GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
           EOF
 
-      - name: Update repo metadata
+      - name: Import bundle
         env:
           GPGKEY: ${{ secrets.gpgkey }}
         run: |
           docker run --rm \
-            --security-opt seccomp=${GITHUB_WORKSPACE}/flatpak.seccomp.json \
-            --security-opt apparmor=unconfined \
             --cap-drop all \
             --entrypoint="" \
             --tmpfs /home/builduser/.gnupg:uid=1001,gid=1001,mode=0700 \
@@ -340,7 +311,9 @@ jobs:
             /bin/bash -c '
               mkdir -p repo/refs/remotes
               echo "${GPGKEY}" | gpg --import
-              flatpak build-sign repo --gpg-sign=dc812d3cb7855746
+              for bundle in *.flatpak; do
+                flatpak build-import-bundle repo "$bundle" --gpg-sign=dc812d3cb7855746 --update-appstream || exit 1
+              done
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
             '
 
