@@ -8,6 +8,10 @@ on:
     branches:
       - master
   pull_request:
+    paths:
+      - 'org.kde.Sdk/**'
+    branches:
+      - master
 
 jobs:
   flatpak:
