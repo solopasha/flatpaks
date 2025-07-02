@@ -46,7 +46,10 @@ jobs:
             */*.yml
             */*.yaml
             */*.json
-          files_ignore: 'org.kde.Sdk/**'
+          files_ignore: |
+            org.kde.Sdk/**
+            org.telegram.desktop/*.json
+            org.telegram.desktop/desktop-app-patches
 
       - name: Assemble build matrix
         id: builds

@@ -1,0 +1,3 @@
+[submodule "org.telegram.desktop/desktop-app-patches"]
+	path = org.telegram.desktop/desktop-app-patches
+	url = https://github.com/desktop-app/patches.git
