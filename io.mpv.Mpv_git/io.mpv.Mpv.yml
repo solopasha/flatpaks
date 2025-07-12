@@ -174,7 +174,7 @@ modules:
           type: git
           url: https://api.github.com/repos/ccxvii/mujs/tags
           tag-pattern: ^([\d.]+)$
-          versions: {==: 1.3.6}
+          versions: { ==: 1.3.6 }
 
   - name: nv-codec-headers
     cleanup:
@@ -320,7 +320,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
-          versions: {==: 7.349.0}
+          versions: { ==: 7.349.0 }
 
   - name: vapoursynth
     config-opts:
@@ -468,6 +468,7 @@ modules:
       - -Dzlib=enabled
     post-install:
       - mv /app/bin/mpv /app/bin/mpv-bin
+      - mkdir -p /app/etc/mpv
       # save screenshots at xdg-pictures/mpv
       - echo "screenshot-directory=~/.var/app/io.mpv.Mpv/Pictures/mpv" > /app/etc/mpv/mpv.conf
     sources:
