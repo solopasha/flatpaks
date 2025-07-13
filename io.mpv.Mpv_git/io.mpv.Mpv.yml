@@ -174,7 +174,7 @@ modules:
           type: git
           url: https://api.github.com/repos/ccxvii/mujs/tags
           tag-pattern: ^([\d.]+)$
-          versions: { ==: 1.3.6 }
+          versions: {==: 1.3.6}
 
   - name: nv-codec-headers
     cleanup:
@@ -320,7 +320,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
-          versions: { ==: 7.349.0 }
+          versions: {==: 7.349.0}
 
   - name: vapoursynth
     config-opts:
@@ -474,7 +474,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: 112f0000cb4456a8669b81bb8ea5d26f9aab07e3
+        commit: bd2118026b9b46da5633724b34e7849eec80f72c
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
