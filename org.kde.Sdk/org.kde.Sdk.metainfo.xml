@@ -11,8 +11,11 @@
   <project_group>KDE</project_group>
   ​<update_contact>kde-devel@kde.org</update_contact>
   ​<releases>
-    <release version="6.4.2" date="2025-07-02">
+    <release version="6.4.3" date="2025-07-15">
       <description></description>
+    </release>
+    <release version="6.4.2" date="2025-07-02">
+      <description/>
     </release>
   </releases>
 </component>
