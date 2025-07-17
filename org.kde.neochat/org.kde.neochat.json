@@ -198,7 +198,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/frameworks/kirigami.git",
-                    "commit": "4228d63b7ac67b5591153e14459bff38206b34c0",
+                    "commit": "7e96969299184b34d1c9634f05ca0084e968bdba",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/frameworks%2Fkirigami/repository/commits",
@@ -221,7 +221,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "16ae6d4a1a2779275303e57a2afa308c36e52d9c",
+                    "commit": "b2614939b35ec69063775e0acd631032f746d851",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
