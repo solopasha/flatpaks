@@ -198,7 +198,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/frameworks/kirigami.git",
-                    "commit": "676feb46881eadc978f3785e31e8808fecf46573",
+                    "commit": "beff38ca848e0a5d0eeb71592b4c583066842609",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/frameworks%2Fkirigami/repository/commits",
@@ -221,7 +221,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "b2614939b35ec69063775e0acd631032f746d851",
+                    "commit": "9cf9e7a0af501923de08fc867d152da2f2ec2cd3",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
@@ -245,7 +245,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kunifiedpush.git",
-                    "commit": "7b33ae983020b126efecb78dd41617e42a90cf8c",
+                    "commit": "bbfddfa3f021119de0aa0f0c502762ca0d033893",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkunifiedpush/repository/commits",
@@ -269,7 +269,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/neochat.git",
-                    "commit": "edf5d55da41c0007451cc4ec00f2ad4385023320",
+                    "commit": "8bcd9f74695b6e25145571bd108d7a18acfa5b0c",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
