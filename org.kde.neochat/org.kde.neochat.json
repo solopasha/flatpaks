@@ -198,7 +198,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/frameworks/kirigami.git",
-                    "commit": "beff38ca848e0a5d0eeb71592b4c583066842609",
+                    "commit": "aeb4fdf932168a22c65016c3d397841bd596726b",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/frameworks%2Fkirigami/repository/commits",
