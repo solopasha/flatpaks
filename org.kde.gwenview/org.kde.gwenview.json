@@ -181,7 +181,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/graphics/libkdcraw.git",
-                    "commit": "4665da095d8651826a159cbf1c682046ff8140fe",
+                    "commit": "35cba9f98f04e5120a3bb03a35a78d2937d143c2",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/graphics%2Flibkdcraw/repository/commits",
