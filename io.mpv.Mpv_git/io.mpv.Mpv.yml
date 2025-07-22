@@ -474,7 +474,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: 440f35a26db3fd9f25282bff0f06f4e86e8133c2
+        commit: 0ac07305fbb1d482830131055d20ebfed146e10c
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
@@ -531,8 +531,8 @@ modules:
       - install yt-dlp /app/bin
     sources:
       - type: archive
-        url: https://github.com/yt-dlp/yt-dlp/releases/download/2025.06.30/yt-dlp.tar.gz
-        sha256: 606f3e3e431839998d1f377de615a9792e77e5968ad929c2c6ba1a17774bbf1b
+        url: https://github.com/yt-dlp/yt-dlp/releases/download/2025.07.21/yt-dlp.tar.gz
+        sha256: 36cbd8a36c30c8a17c13faf452118c1ee8ba1aeb8516aa4ead6f17d8a6e4a10a
         x-checker-data:
           type: json
           url: https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest
