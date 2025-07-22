@@ -369,3 +369,4 @@ modules:
       - type: patch
         paths:
           - block-sponsored_messages.patch
+          - e070af31638acf77ac651cc56a5fd98eecf4d572.patch
