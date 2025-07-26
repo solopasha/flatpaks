@@ -2441,8 +2441,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/kio-extras.git",
-                    "commit": "a8410be93a054f185896b1cd22aab087c838fe27",
-                    "tag": "v25.07.80",
+                    "commit": "f18aa7eaf29ccc1f96dd0c598545af81a6ed753d",
+                    "tag": "v25.07.90",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
