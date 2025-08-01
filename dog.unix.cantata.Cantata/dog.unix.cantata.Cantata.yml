@@ -1,6 +1,6 @@
 id: dog.unix.cantata.Cantata
 runtime: org.kde.Platform
-runtime-version: 'solopasha'
+runtime-version: solopasha
 sdk: org.kde.Sdk
 command: cantata.sh
 finish-args:
@@ -146,8 +146,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/MusicPlayerDaemon/MPD.git
-        tag: v0.24.4
-        commit: 72077d76f11ffba21f6705fe912f47b0b5dc1d6e
+        tag: v0.24.5
+        commit: 35df68a2dd11fe7e873c54d966f227328b52f4fa
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
