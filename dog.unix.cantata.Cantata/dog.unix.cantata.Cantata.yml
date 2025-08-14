@@ -154,6 +154,20 @@ modules:
       - type: file
         path: mpd.conf
 
+  - name: libebur128
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: git
+        url: https://github.com/jiixyj/libebur128.git
+        commit: 67b33abe1558160ed76ada1322329b0e9e058b02
+        tag: v1.2.6
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
+
   - name: cantata
     buildsystem: cmake-ninja
     builddir: true
@@ -162,13 +176,14 @@ modules:
       - -DENABLE_DEVICES_SUPPORT=OFF
       - -DENABLE_REMOTE_DEVICES=OFF
       - -DENABLE_UDISKS2=OFF
+      - -DBUNDLED_FONTAWESOME=ON
     post-install:
       - install -Dpm755 ../cantata.sh -t /app/bin
       - sed 's/Exec=cantata/Exec=cantata.sh/' -i /app/share/applications/dog.unix.cantata.Cantata.desktop
     sources:
       - type: git
         url: https://github.com/nullobsi/cantata.git
-        commit: a19efdf9649c50320f8592f07d82734c352ace9c
+        commit: 60aaf95758419eee2517e3726f4ed820308085a4
         x-checker-data:
           type: json
           url: https://api.github.com/repos/nullobsi/cantata/branches/main
