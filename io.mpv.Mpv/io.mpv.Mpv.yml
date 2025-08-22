@@ -396,6 +396,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^n([\d.]{3,7})$
+          versions: { <: 8.0 }
 
   - name: hwdata
     buildsystem: autotools
