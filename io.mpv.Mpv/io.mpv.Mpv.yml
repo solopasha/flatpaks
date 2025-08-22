@@ -175,7 +175,7 @@ modules:
           type: git
           url: https://api.github.com/repos/ccxvii/mujs/tags
           tag-pattern: ^([\d.]+)$
-          versions: {==: 1.3.6}
+          versions: { ==: 1.3.6 }
 
   - name: nv-codec-headers
     cleanup:
@@ -321,7 +321,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
-          versions: {==: 7.349.0}
+          versions: { ==: 7.349.0 }
 
   - name: vapoursynth
     config-opts:
@@ -396,7 +396,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^n([\d.]{3,7})$
-          versions: { <: 8.0 }
+          versions: { <: 8.0.0 }
 
   - name: hwdata
     buildsystem: autotools
