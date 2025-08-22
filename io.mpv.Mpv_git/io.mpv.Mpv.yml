@@ -320,6 +320,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
+          versions: { ==: 7.349.0 }
 
   - name: vapoursynth
     config-opts:
@@ -394,6 +395,7 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^n([\d.]{3,7})$
+          versions: { <: 8.0.0 }
 
   - name: hwdata
     buildsystem: autotools
