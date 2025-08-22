@@ -245,7 +245,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kunifiedpush.git",
-                    "commit": "744df0af09a675a7212c77f96669233d728a18cf",
+                    "commit": "c4b408a08dfa4064cfc102b81e63f9cf51deaf08",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkunifiedpush/repository/commits",
