@@ -154,7 +154,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/quotient-im/libQuotient.git",
-                    "commit": "1b9abadf27003a499d7d638703dc7663b190c689",
+                    "commit": "d5121d45caea14f448226ed7c7f372146e186112",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/quotient-im/libQuotient/commits",
@@ -221,7 +221,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "6790c64c81b277e8b84fcb9ea7adcd60af9b143b",
+                    "commit": "0eb03f2b9dbdd624cdc4ddfd0d3571104787d31b",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
@@ -269,7 +269,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/neochat.git",
-                    "commit": "2c09a48c8de12f2551b665d89d8df45d2b46e6d8",
+                    "commit": "bb3e28bc437a7d4d1f0f8ba5d025b566c5ce1827",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
