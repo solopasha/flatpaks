@@ -1,7 +1,7 @@
 name: 'Check for external updates'
 on:
   schedule:
-    - cron: '30 */6 * * *'
+    - cron: '20 4 * * *'
   workflow_dispatch:
 
 jobs:
