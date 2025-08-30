@@ -313,14 +313,14 @@ modules:
     sources:
       - type: git
         url: https://github.com/haasn/libplacebo.git
-        mirror-urls:
-          - https://code.videolan.org/videolan/libplacebo.git
-        tag: v7.349.0
-        commit: 1fd3c7bde7b943fe8985c893310b5269a09b46c5
+        tag: v7.351.0
+        commit: 3188549fba13bbdf3a5a98de2a38c2e71f04e21e
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$
-          versions: {==: 7.349.0}
+      - type: patch
+        paths:
+          - 707.patch
 
   - name: vapoursynth
     config-opts:
@@ -388,14 +388,11 @@ modules:
     sources:
       - type: git
         url: https://github.com/FFmpeg/FFmpeg.git
-        mirror-urls:
-          - https://git.ffmpeg.org/ffmpeg.git
-        commit: db69d06eeeab4f46da15030a80d539efb4503ca8
-        tag: n7.1.1
+        commit: 140fd653aed8cad774f991ba083e2d01e86420c7
+        tag: n8.0
         x-checker-data:
           type: git
           tag-pattern: ^n([\d.]{3,7})$
-          versions: {<: 8.0.0}
 
   - name: hwdata
     buildsystem: autotools
