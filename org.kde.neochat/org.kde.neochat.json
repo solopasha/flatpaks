@@ -154,7 +154,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/quotient-im/libQuotient.git",
-                    "commit": "d5121d45caea14f448226ed7c7f372146e186112",
+                    "commit": "0463b388b9392a385956931c2d6e286394bc49c5",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://api.github.com/repos/quotient-im/libQuotient/commits",
@@ -269,7 +269,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/neochat.git",
-                    "commit": "8f7be9993cd9cd5af8ef770e304e626a1963e376",
+                    "commit": "c7e409abe98b29f3822f3fbe6b89e00c2c5e1adf",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
