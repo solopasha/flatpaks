@@ -103,6 +103,11 @@
         "/lib/*/cmake",
         "/mkspecs",
         "/lib/mkspecs",
+        "/lib/cmake",
+        "/lib/metatypes",
+        "/lib/modules",
+        "/lib/plugins/designer",
+        "/lib/plugins/qmltooling",
         "*.prl"
     ],
     "cleanup-platform-commands": [
@@ -110,7 +115,10 @@
     ],
     "build-options": {
         "cflags": "-g1",
-        "cxxflags": "-g1"
+        "cxxflags": "-g1",
+        "env": {
+            "CMAKE_BUILD_TYPE": "None"
+        }
     },
     "modules": [
         {
@@ -134,9 +142,10 @@
             },
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON",
+                "-DCMAKE_MESSAGE_LOG_LEVEL=STATUS",
                 "-DINSTALL_ARCHDATADIR=lib",
                 "-DQT_DISABLE_RPATH=ON",
-                "-DBUILD_WITH_PCH=FALSE",
                 "-DQT_FEATURE_openssl_linked=ON",
                 "-DQT_FEATURE_system_sqlite=ON"
             ],
@@ -877,6 +886,9 @@
         {
             "name": "plasma-wayland-protocols",
             "buildsystem": "cmake-ninja",
+            "cleanup-platform": [
+                "*"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -1122,9 +1134,6 @@
         },
         {
             "name": "breeze-icons",
-            "cleanup-platform": [
-                "*.rcc"
-            ],
             "config-opts": [
                 "-DBUILD_TESTING=OFF"
             ],
@@ -1565,7 +1574,12 @@
                         {
                             "type": "git",
                             "url": "https://invent.kde.org/libraries/qca.git",
-                            "tag": "v2.3.10"
+                            "tag": "v2.3.10",
+                            "x-checker-data": {
+                                "type": "git",
+                                "tag-pattern": "^v([\\d.]+)$"
+                            },
+                            "commit": "df5171e3c4baf346581f15af5a040e61b166a332"
                         }
                     ]
                 },
@@ -1577,17 +1591,21 @@
                         "-Dvapi=false",
                         "-Dgtk_doc=false",
                         "-Dintrospection=false",
-                        "-Dcrypto=disabled",
-                        "--default-library=static"
+                        "-Dbash_completion=disabled"
                     ],
                     "cleanup": [
-                        "*"
+                        "/bin"
                     ],
                     "sources": [
                         {
-                            "type": "archive",
-                            "url": "https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.6.tar.xz",
-                            "sha256": "747b8c175be108c880d3adfb9c3537ea66e520e4ad2dccf5dce58003aeeca090"
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/libsecret.git",
+                            "tag": "0.21.7",
+                            "x-checker-data": {
+                                "type": "git",
+                                "tag-pattern": "^([\\d.]+)$"
+                            },
+                            "commit": "0936f740c02b60f02657729cd99f581db4517a41"
                         }
                     ]
                 }
@@ -2138,7 +2156,12 @@
                         {
                             "type": "git",
                             "url": "https://github.com/libical/libical.git",
-                            "tag": "v3.0.20"
+                            "tag": "v3.0.20",
+                            "x-checker-data": {
+                                "type": "git",
+                                "tag-pattern": "^v([\\d.]+)$"
+                            },
+                            "commit": "57ce34025066935f356fd539e6deb7a7a9952618"
                         }
                     ]
                 }

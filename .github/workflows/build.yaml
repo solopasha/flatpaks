@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -126,7 +126,7 @@ jobs:
           sudo apt-get clean || true
           sudo rm -rf /var/lib/apt/lists/*
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: 'true'
           persist-credentials: false
@@ -274,7 +274,7 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: steps.cache.outputs.cache-hit == ''
 
       - name: Download repo
@@ -306,6 +306,17 @@ jobs:
           Icon=https://raw.githubusercontent.com/flatpak/flatpak/main/flatpak.png
           GPGKey=$(base64 --wrap=0 < RPM-GPG-KEY-${{ github.repository_owner }})
           EOF
+
+      - name: Update static index
+        if: steps.cache.outputs.cache-hit == ''
+        run: |
+          mkdir -p repo/index
+          JSON='{"Registry":"https://ghcr.io/","Results":[]}'
+          for manifest in org.kde.Sdk org.kde.Sdk.Locale org.kde.Sdk.Debug org.kde.Platform org.kde.Platform.Locale; do
+            DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"
+            JSON=$(jq --argjson docker "$DOCKER" '.Results += [ $docker ]' <<< "$JSON" )
+          done
+          echo "$JSON" > repo/index/static
 
       - name: Grab build artifacts
         uses: actions/download-artifact@v4

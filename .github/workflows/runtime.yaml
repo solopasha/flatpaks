@@ -48,7 +48,7 @@ jobs:
           sudo apt-get clean || true
           sudo rm -rf /var/lib/apt/lists/*
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: 'true'
           persist-credentials: false
@@ -127,6 +127,7 @@ jobs:
                 --repo=repo \
                 --sandbox \
                 builddir org.kde.Sdk/org.kde.Sdk.json
+              rm -rf builddir
             '
 
       - name: Bundles
@@ -138,36 +139,86 @@ jobs:
             -w /work \
             ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
-              flatpak build-bundle repo platform.flatpak \
+              flatpak build-bundle repo org.kde.Sdk.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                --runtime \
+                --oci \
+                org.kde.Sdk solopasha
+
+              flatpak build-bundle repo org.kde.Sdk.Locale.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                --runtime \
+                --oci \
+                org.kde.Sdk.Locale solopasha
+
+              flatpak build-bundle repo org.kde.Sdk.Debug.flatpak \
+                --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+                --arch=x86_64 \
+                --runtime \
+                --oci \
+                org.kde.Sdk.Debug solopasha
+
+              flatpak build-bundle repo org.kde.Platform.flatpak \
                 --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
                 --arch=x86_64 \
                 --runtime \
                 --oci \
                 org.kde.Platform solopasha
 
-              flatpak build-bundle repo sdk.flatpak \
+              flatpak build-bundle repo org.kde.Platform.Locale.flatpak \
                 --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
                 --arch=x86_64 \
                 --runtime \
                 --oci \
-                org.kde.Sdk solopasha
+                org.kde.Platform.Locale solopasha
             '
 
-      - name: Upload platform
+      - name: Upload org.kde.Sdk
         uses: actions/upload-artifact@v4
         with:
-          name: platform.flatpak
-          path: platform.flatpak
+          name: org.kde.Sdk.flatpak
+          path: org.kde.Sdk.flatpak
           retention-days: 1
           compression-level: 0
+          if-no-files-found: error
 
-      - name: Upload sdk
+      - name: Upload org.kde.Sdk.Locale
         uses: actions/upload-artifact@v4
         with:
-          name: sdk.flatpak
-          path: sdk.flatpak
+          name: org.kde.Sdk.Locale.flatpak
+          path: org.kde.Sdk.Locale.flatpak
           retention-days: 1
           compression-level: 0
+          if-no-files-found: error
+
+      - name: Upload org.kde.Sdk.Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: org.kde.Sdk.Debug.flatpak
+          path: org.kde.Sdk.Debug.flatpak
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Upload org.kde.Platform
+        uses: actions/upload-artifact@v4
+        with:
+          name: org.kde.Platform.flatpak
+          path: org.kde.Platform.flatpak
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Upload org.kde.Platform.Locale
+        uses: actions/upload-artifact@v4
+        with:
+          name: org.kde.Platform.Locale.flatpak
+          path: org.kde.Platform.Locale.flatpak
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
 
       - name: Save cache
         id: cache-save
@@ -188,17 +239,10 @@ jobs:
       image: ghcr.io/solopasha/flatpaks/buildroot:latest
       options: --tmpfs /run/containers:uid=1001,gid=1001,mode=0700 --cap-drop all
     steps:
-      - name: Download platform
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: platform.flatpak
-          path: platform.flatpak
-
-      - name: Download sdk
-        uses: actions/download-artifact@v4
-        with:
-          name: sdk.flatpak
-          path: sdk.flatpak
+          pattern: 'org.kde.*.flatpak'
 
       - name: Login
         run: |
@@ -206,13 +250,31 @@ jobs:
 
       - name: Push
         run: |
-          skopeo copy \
-            oci:platform.flatpak \
-            docker://ghcr.io/${{ github.repository }}/platform:latest
-
-          skopeo copy \
-            oci:sdk.flatpak \
-            docker://ghcr.io/${{ github.repository }}/sdk:latest
+          for i in {1..7}; do
+            skopeo copy --retry-times 3 \
+              oci:org.kde.Sdk.flatpak \
+              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk:latest && break || sleep $((5 * i))
+          fi
+          for i in {1..7}; do
+            skopeo copy --retry-times 3 \
+              oci:org.kde.Sdk.Locale.flatpak \
+              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk.Locale:latest && break || sleep $((5 * i))
+          fi
+          for i in {1..7}; do
+            skopeo copy --retry-times 3 \
+              oci:org.kde.Sdk.Debug.flatpak \
+              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk.Debug:latest && break || sleep $((5 * i))
+          fi
+          for i in {1..7}; do
+            skopeo copy --retry-times 3 \
+              oci:org.kde.Platform.flatpak \
+              docker://ghcr.io/${{ github.repository }}/org.kde.Platform:latest && break || sleep $((5 * i))
+          fi
+          for i in {1..7}; do
+            skopeo copy --retry-times 3 \
+              oci:org.kde.Platform.Locale.flatpak \
+              docker://ghcr.io/${{ github.repository }}/org.kde.Platform.Locale:latest && break || sleep $((5 * i))
+          fi
 
   repo:
     if: ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) && github.ref == 'refs/heads/master'
@@ -234,7 +296,7 @@ jobs:
           key: repo-${{ github.sha }}
           restore-keys: repo-
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: steps.cache.outputs.cache-hit == ''
 
       - name: Download repo
@@ -271,7 +333,7 @@ jobs:
         run: |
           mkdir -p repo/index
           JSON='{"Registry":"https://ghcr.io/","Results":[]}'
-          for manifest in sdk platform; do
+          for manifest in org.kde.Sdk org.kde.Sdk.Locale org.kde.Sdk.Debug org.kde.Platform org.kde.Platform.Locale; do
             DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"
             JSON=$(jq --argjson docker "$DOCKER" '.Results += [ $docker ]' <<< "$JSON" )
           done
