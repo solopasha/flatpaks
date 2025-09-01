@@ -146,8 +146,9 @@
                 "-DCMAKE_MESSAGE_LOG_LEVEL=STATUS",
                 "-DINSTALL_ARCHDATADIR=lib",
                 "-DQT_DISABLE_RPATH=ON",
-                "-DQT_FEATURE_openssl_linked=ON",
-                "-DQT_FEATURE_system_sqlite=ON"
+                "-DFEATURE_openssl_linked=ON",
+                "-DFEATURE_system_sqlite=ON",
+                "-DFEATURE_libproxy=ON"
             ],
             "sources": [
                 {
