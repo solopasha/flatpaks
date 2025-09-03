@@ -253,27 +253,27 @@ jobs:
           for i in {1..7}; do
             skopeo copy --retry-times 3 \
               oci:org.kde.Sdk.flatpak \
-              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk:latest && break || sleep $((5 * i))
+              docker://ghcr.io/${{ github.repository }}/org.kde.sdk:latest && break || sleep $((5 * i))
           done
           for i in {1..7}; do
             skopeo copy --retry-times 3 \
               oci:org.kde.Sdk.Locale.flatpak \
-              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk.Locale:latest && break || sleep $((5 * i))
+              docker://ghcr.io/${{ github.repository }}/org.kde.sdk.locale:latest && break || sleep $((5 * i))
           done
           for i in {1..7}; do
             skopeo copy --retry-times 3 \
               oci:org.kde.Sdk.Debug.flatpak \
-              docker://ghcr.io/${{ github.repository }}/org.kde.Sdk.Debug:latest && break || sleep $((5 * i))
+              docker://ghcr.io/${{ github.repository }}/org.kde.sdk.debug:latest && break || sleep $((5 * i))
           done
           for i in {1..7}; do
             skopeo copy --retry-times 3 \
               oci:org.kde.Platform.flatpak \
-              docker://ghcr.io/${{ github.repository }}/org.kde.Platform:latest && break || sleep $((5 * i))
+              docker://ghcr.io/${{ github.repository }}/org.kde.platform:latest && break || sleep $((5 * i))
           done
           for i in {1..7}; do
             skopeo copy --retry-times 3 \
               oci:org.kde.Platform.Locale.flatpak \
-              docker://ghcr.io/${{ github.repository }}/org.kde.Platform.Locale:latest && break || sleep $((5 * i))
+              docker://ghcr.io/${{ github.repository }}/org.kde.platform.locale:latest && break || sleep $((5 * i))
           done
 
   repo:
@@ -333,7 +333,7 @@ jobs:
         run: |
           mkdir -p repo/index
           JSON='{"Registry":"https://ghcr.io/","Results":[]}'
-          for manifest in org.kde.Sdk org.kde.Sdk.Locale org.kde.Sdk.Debug org.kde.Platform org.kde.Platform.Locale; do
+          for manifest in org.kde.sdk org.kde.sdk.locale org.kde.sdk.debug org.kde.platform org.kde.platform.locale; do
             DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"
             JSON=$(jq --argjson docker "$DOCKER" '.Results += [ $docker ]' <<< "$JSON" )
           done

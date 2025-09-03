@@ -312,7 +312,7 @@ jobs:
         run: |
           mkdir -p repo/index
           JSON='{"Registry":"https://ghcr.io/","Results":[]}'
-          for manifest in org.kde.Sdk org.kde.Sdk.Locale org.kde.Sdk.Debug org.kde.Platform org.kde.Platform.Locale; do
+          for manifest in org.kde.sdk org.kde.sdk.locale org.kde.sdk.debug org.kde.platform org.kde.platform.locale; do
             DOCKER="$(skopeo inspect docker://ghcr.io/${{ github.repository }}/$manifest:latest | jq -c --arg github_repository "${{ github.repository }}" --arg manifest $manifest '. as $img | { "Name": ($github_repository + "/" + $manifest), "Images": [$img] }')"
             JSON=$(jq --argjson docker "$DOCKER" '.Results += [ $docker ]' <<< "$JSON" )
           done
