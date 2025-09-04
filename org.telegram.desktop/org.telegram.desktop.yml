@@ -121,8 +121,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/systemd/systemd.git
-        commit: 5e38d199a623563698ab4a69acbbe3afa9135198
-        tag: v257.8
+        commit: 147c30b613960bc24595435bd902a5c4beb5aba9
+        tag: v257.9
         x-checker-data:
           type: json
           url: https://api.github.com/repos/systemd/systemd/releases/latest
@@ -385,8 +385,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/telegramdesktop/tdesktop.git
-        commit: 87f873c8b6290f67b2fa1cc20afd0576ab6f9846
-        tag: v6.1.0
+        commit: 86262333a457f62709726ee4ab9c48fa58824da4
+        tag: v6.1.1
         x-checker-data:
           type: json
           url: https://api.github.com/repos/telegramdesktop/tdesktop/releases
