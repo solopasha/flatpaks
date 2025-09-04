@@ -10,7 +10,7 @@ shift "$((OPTIND-1))"
 export GH_PAGER=
 DAYS_OLD=14
 
-packages=(buildroot platform sdk)
+packages=(buildroot org.kde.sdk org.kde.sdk.locale org.kde.sdk.debug org.kde.platform org.kde.platform.locale)
 
 now=$(date +%s)
 
