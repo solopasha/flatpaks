@@ -200,8 +200,8 @@ modules:
       - --enable-shared
     sources:
       - type: git
-        url: https://github.com/mirror/x264.git
-        commit: 31e19f92f00c7003fa115047ce50978bc98c3a0d
+        url: https://code.videolan.org/videolan/x264.git
+        commit: b35605ace3ddf7c1a5d67a2eb553f034aef41d55
         # Every commit to the stable branch is considered a release
         # https://code.videolan.org/videolan/x264/-/issues/35
         x-checker-data:
@@ -403,8 +403,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/vcrhonek/hwdata
-        tag: v0.398
-        commit: 4c97c196390e16a84d3394e7e6f0608046f7ba81
+        tag: v0.399
+        commit: 7ba0e54565843faee300ca885699e4c42ed674b2
         x-checker-data:
           type: json
           url: https://api.github.com/repos/vcrhonek/hwdata/releases/latest
