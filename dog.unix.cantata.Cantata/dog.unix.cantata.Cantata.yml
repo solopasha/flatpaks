@@ -183,7 +183,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/nullobsi/cantata.git
-        commit: 60aaf95758419eee2517e3726f4ed820308085a4
+        commit: 9ee04148d9e6dfcf5c8cb4b8a1fe3c9807461650
         x-checker-data:
           type: json
           url: https://api.github.com/repos/nullobsi/cantata/branches/main
