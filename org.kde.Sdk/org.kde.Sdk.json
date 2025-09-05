@@ -2516,6 +2516,24 @@
             ]
         },
         {
+            "name": "fontconfig",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dtests=disabled",
+                "-Dcache-build=disabled",
+                "-Ddoc=disabled",
+                "-Dtemplate-dir=/etc/fonts/conf.avail",
+                "-Dxml-backend=expat"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.freedesktop.org/fontconfig/fontconfig.git",
+                    "commit": "6d0a98982ec351c165c9224c8b7dbdfca3010e47"
+                }
+            ]
+        },
+        {
             "name": "os-release",
             "post-install": [
                 "mkdir -p /usr/share/runtime/lib/plugins/"
