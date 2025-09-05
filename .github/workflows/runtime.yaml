@@ -117,7 +117,6 @@ jobs:
               flatpak-builder -v \
                 --user \
                 --arch=x86_64 \
-                --ccache \
                 --default-branch=master \
                 --delete-build-dirs \
                 --disable-download \
@@ -126,8 +125,10 @@ jobs:
                 --install-deps-from=flathub \
                 --repo=repo \
                 --sandbox \
-                builddir org.kde.Sdk/org.kde.Sdk.json
+                builddir org.kde.Sdk/org.kde.Sdk.json || exit 1
               rm -rf builddir
+              rm -rf .flatpak-builder/ccache || :
+              du -sh .flatpak-builder || :
             '
 
       - name: Bundles

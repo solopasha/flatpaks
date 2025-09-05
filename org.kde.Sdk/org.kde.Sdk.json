@@ -5,7 +5,7 @@
     "branch": "solopasha",
     "runtime": "org.freedesktop.Platform",
     "sdk": "org.freedesktop.Sdk",
-    "runtime-version": "24.08",
+    "runtime-version": "25.08",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Locale",
         "org.freedesktop.Sdk.Docs"
@@ -19,9 +19,10 @@
         "org.freedesktop.Platform.GStreamer",
         "org.freedesktop.Platform.Icontheme",
         "org.freedesktop.Platform.VAAPI.Intel",
-        "org.freedesktop.Platform.openh264",
         "org.freedesktop.Platform.VulkanLayer",
-        "org.gtk.Gtk3theme"
+        "org.gtk.Gtk3theme",
+        "org.freedesktop.Platform.VAAPI.nvidia",
+        "org.freedesktop.Platform.codecs-extra"
     ],
     "inherit-sdk-extensions": [
         "org.freedesktop.Sdk.Extension"
@@ -64,7 +65,7 @@
     },
     "finish-args": [
         "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
-        "--env=GST_PLUGIN_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/x86_64-linux-gnu/gstreamer-1.0",
+        "--env=GST_PLUGIN_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/x86_64-linux-gnu/codecs-extra/lib/gstreamer-1.0:/usr/lib/x86_64-linux-gnu/gstreamer-1.0",
         "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share:/run/host/user-share:/run/host/share",
         "--env=__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS=/etc/egl/egl_external_platform.d:/usr/lib/x86_64-linux-gnu/GL/egl/egl_external_platform.d:/usr/share/egl/egl_external_platform.d",
         "--env=QT_PLUGIN_PATH=/app/lib/plugins:/usr/share/runtime/lib/plugins",
@@ -116,6 +117,7 @@
     "build-options": {
         "cflags": "-g1",
         "cxxflags": "-g1",
+        "ldflags": "-Wl,-z,pack-relative-relocs",
         "env": {
             "CMAKE_BUILD_TYPE": "None"
         }
@@ -1583,32 +1585,6 @@
                             "commit": "df5171e3c4baf346581f15af5a040e61b166a332"
                         }
                     ]
-                },
-                {
-                    "name": "libsecret",
-                    "buildsystem": "meson",
-                    "config-opts": [
-                        "-Dmanpage=false",
-                        "-Dvapi=false",
-                        "-Dgtk_doc=false",
-                        "-Dintrospection=false",
-                        "-Dbash_completion=disabled"
-                    ],
-                    "cleanup": [
-                        "/bin"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://gitlab.gnome.org/GNOME/libsecret.git",
-                            "tag": "0.21.7",
-                            "x-checker-data": {
-                                "type": "git",
-                                "tag-pattern": "^([\\d.]+)$"
-                            },
-                            "commit": "0936f740c02b60f02657729cd99f581db4517a41"
-                        }
-                    ]
                 }
             ]
         },
@@ -2212,7 +2188,8 @@
                     "buildsystem": "cmake-ninja",
                     "config-opts": [
                         "-DBUILD_SHARED_LIBS=ON",
-                        "-DWITH_TOOLS=OFF"
+                        "-DWITH_TOOLS=OFF",
+                        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
                     ],
                     "builddir": true,
                     "sources": [
