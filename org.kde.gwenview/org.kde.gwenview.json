@@ -24,14 +24,6 @@
         "/lib/pkgconfig",
         "/share/man"
     ],
-    "add-extensions": {
-        "org.freedesktop.Platform.ffmpeg-full": {
-            "directory": "lib/ffmpeg",
-            "version": "24.08",
-            "add-ld-path": ".",
-            "no-autodownload": false
-        }
-    },
     "cleanup-commands": [
         "mkdir -p /app/lib/ffmpeg"
     ],
@@ -63,6 +55,7 @@
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_SHARED_LIBS=ON",
                 "-DEXIV2_ENABLE_XMP=ON",
                 "-DEXIV2_ENABLE_EXTERNAL_XMP=OFF",
@@ -126,6 +119,7 @@
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DJAS_ENABLE_SHARED=ON",
                 "-DJAS_ENABLE_LIBJPEG=ON",
                 "-DJAS_ENABLE_OPENGL=OFF",
@@ -173,6 +167,7 @@
             "name": "libkdcraw",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_TESTING=OFF",
                 "-DQT_MAJOR_VERSION=6"
             ],
@@ -216,6 +211,7 @@
             "name": "baloo",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_TESTING=OFF"
             ],
             "builddir": true,
@@ -237,6 +233,7 @@
             "name": "kColorPicker",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_WITH_QT6=ON",
                 "-DBUILD_SHARED_LIBS=ON"
             ],
@@ -259,6 +256,7 @@
             "name": "kImageAnnotator",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_WITH_QT6=ON",
                 "-DBUILD_SHARED_LIBS=ON"
             ],
@@ -280,6 +278,10 @@
         {
             "name": "gwenview",
             "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_TESTING=OFF"
+            ],
             "builddir": true,
             "sources": [
                 {

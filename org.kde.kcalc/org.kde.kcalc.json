@@ -60,7 +60,8 @@
             "name": "kcalc",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DINSTALL_ICONS=ON"
+                "-DINSTALL_ICONS=ON",
+                "-DCMAKE_BUILD_TYPE=Release"
             ],
             "sources": [
                 {

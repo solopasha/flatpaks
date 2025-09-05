@@ -37,7 +37,7 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
             ],
             "sources": [
                 {
@@ -45,36 +45,6 @@
                     "url": "https://gitlab.matrix.org/matrix-org/olm.git",
                     "commit": "7e0c8277032e40308987257b711b38af8d77cc69",
                     "tag": "3.2.16"
-                }
-            ]
-        },
-        {
-            "name": "libsecret",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dmanpage=false",
-                "-Dvapi=false",
-                "-Dgtk_doc=false",
-                "-Dintrospection=false",
-                "-Dcrypto=disabled"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/share/man"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.7.tar.xz",
-                    "sha256": "6b452e4750590a2b5617adc40026f28d2f4903de15f1250e1d1c40bfd68ed55e",
-                    "x-checker-data": {
-                        "type": "anitya",
-                        "project-id": 13150,
-                        "stable-only": true,
-                        "url-template": "https://download.gnome.org/sources/libsecret/${version0}.${version1}/libsecret-$version.tar.xz"
-                    }
                 }
             ]
         },
@@ -90,7 +60,6 @@
                 "-DLIB_INSTALL_DIR=/app/lib",
                 "-DBUILD_TRANSLATIONS=NO",
                 "-DBUILD_WITH_QT6=ON",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "sources": [
@@ -113,7 +82,6 @@
             "builddir": true,
             "config-opts": [
                 "-DCMARK_TESTS=OFF",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "cleanup": [
@@ -141,7 +109,6 @@
                 "-DBUILD_TESTING=OFF",
                 "-DQuotient_ENABLE_E2EE=ON",
                 "-DBUILD_WITH_QT6=ON",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_SHARED_LIBS=ON"
             ],
@@ -170,7 +137,6 @@
             "builddir": true,
             "config-opts": [
                 "-DBUILD_WITH_QT6=ON",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "sources": [
@@ -214,8 +180,7 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DBUILD_TESTING=OFF",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+                "-DBUILD_TESTING=OFF"
             ],
             "sources": [
                 {
@@ -237,7 +202,6 @@
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
                 "-DBUILD_TESTING=OFF",
                 "-DKUNIFIEDPUSH_CLIENT_ONLY=ON"
             ],
@@ -262,8 +226,7 @@
             "config-opts": [
                 "-DNEOCHAT_FLATPAK=ON",
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DBUILD_TESTING=OFF",
-                "-DCMAKE_VERBOSE_MAKEFILE=ON"
+                "-DBUILD_TESTING=OFF"
             ],
             "sources": [
                 {

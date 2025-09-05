@@ -103,6 +103,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Free up disk space
+        if: matrix.app.dirname == 'org.telegram.desktop'
         run: |
           sudo rm -rf /opt/ghc /usr/local/.ghcup || true
           sudo rm -rf /opt/hostedtoolcache
@@ -196,7 +197,6 @@ jobs:
               dbus-run-session -- flatpak-builder \
                 --user \
                 --arch=x86_64 \
-                --ccache \
                 --default-branch=master \
                 --delete-build-dirs \
                 --disable-download \
