@@ -90,7 +90,8 @@
     ],
     "cleanup-commands": [
         "/usr/libexec/freedesktop-post.sh",
-        "mkdir -p /usr/lib/debug/usr/lib/i386-linux-gnu"
+        "mkdir -p /usr/lib/debug/usr/lib/i386-linux-gnu",
+        "sed -i 's|/usr/cache/fontconfig|/usr/lib/fontconfig/cache|' /etc/fonts/conf.d/50-flatpak.conf"
     ],
     "cleanup-platform": [
         "/share/runtime/docs",
@@ -112,7 +113,8 @@
         "*.prl"
     ],
     "cleanup-platform-commands": [
-        "/usr/libexec/freedesktop-post.sh"
+        "/usr/libexec/freedesktop-post.sh",
+        "sed -i 's|/usr/cache/fontconfig|/usr/lib/fontconfig/cache|' /etc/fonts/conf.d/50-flatpak.conf"
     ],
     "build-options": {
         "cflags": "-g1",
@@ -2512,24 +2514,6 @@
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
                     }
-                }
-            ]
-        },
-        {
-            "name": "fontconfig",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dtests=disabled",
-                "-Dcache-build=disabled",
-                "-Ddoc=disabled",
-                "-Dtemplate-dir=/etc/fonts/conf.avail",
-                "-Dxml-backend=expat"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.freedesktop.org/fontconfig/fontconfig.git",
-                    "commit": "6d0a98982ec351c165c9224c8b7dbdfca3010e47"
                 }
             ]
         },
