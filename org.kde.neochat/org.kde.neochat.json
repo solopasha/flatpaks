@@ -186,13 +186,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kirigami-addons.git",
-                    "commit": "f8b5ecf9580609bc021a342c928ca2fff286245d",
-                    "x-checker-data": {
-                        "type": "json",
-                        "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkirigami-addons/repository/commits",
-                        "commit-query": "first( .[].id )",
-                        "timestamp-query": "first( .[].committed_date )"
-                    }
+                    "commit": "514980bf381882308de48bfdbc4abcb9096e5e3e"
                 }
             ]
         },
