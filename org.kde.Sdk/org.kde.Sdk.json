@@ -2518,6 +2518,22 @@
             ]
         },
         {
+            "name": "ocean-sound-theme",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/plasma/ocean-sound-theme.git",
+                    "tag": "v6.4.90",
+                    "commit": "1765e84f5acc202625d71e2f8fdd3a8a84441a0b",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^v([\\d.]+)$"
+                    }
+                }
+            ]
+        },
+        {
             "name": "os-release",
             "post-install": [
                 "mkdir -p /usr/share/runtime/lib/plugins/"
