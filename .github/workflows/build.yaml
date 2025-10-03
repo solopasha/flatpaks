@@ -271,7 +271,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: repo
-          key: repo-${{ github.sha }}
+          key: repo-${{ github.run_id }}
           restore-keys: repo-
 
       - uses: actions/checkout@v5
@@ -321,7 +321,7 @@ jobs:
       - name: Grab build artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: "*-bundle"
+          pattern: '*-bundle'
 
       - name: Import bundle
         env:
