@@ -1957,7 +1957,10 @@
                     "x-checker-data": {
                         "type": "anitya",
                         "project-id": 14833,
-                        "url-template": "https://github.com/editorconfig/editorconfig-core-c/archive/refs/tags/v$version.tar.gz"
+                        "url-template": "https://github.com/editorconfig/editorconfig-core-c/archive/refs/tags/v$version.tar.gz",
+                        "versions": {
+                            "==": "0.12.9"
+                        }
                     }
                 }
             ]
