@@ -1060,34 +1060,6 @@
             ]
         },
         {
-            "name": "fcitx5-platforminputcontext",
-            "buildsystem": "cmake-ninja",
-            "config-opts": [
-                "-DENABLE_QT4=OFF",
-                "-DENABLE_QT5=OFF",
-                "-DENABLE_QT6=ON",
-                "-DBUILD_ONLY_PLUGIN=ON"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/fcitx/fcitx5-qt",
-                    "tag": "5.1.10",
-                    "commit": "1a59fba497aea27ef2343a92d655251c7a81235c",
-                    "x-checker-data": {
-                        "type": "git",
-                        "tag-pattern": "^([\\d.]+)$"
-                    }
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "install-licenses.sh"
-                    ]
-                }
-            ]
-        },
-        {
             "name": "plasma-wayland-protocols",
             "buildsystem": "cmake-ninja",
             "cleanup-platform": [
