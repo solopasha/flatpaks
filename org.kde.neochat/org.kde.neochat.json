@@ -197,7 +197,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/libraries/kunifiedpush.git",
-                    "commit": "cd1d15b4ea127b6667992ebbe0015cf8f5338b93",
+                    "commit": "22cb730183f64c53c18a91162fc3752b9ef9a660",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/libraries%2Fkunifiedpush/repository/commits",
@@ -220,7 +220,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/network/neochat.git",
-                    "commit": "a631acc0ac584ec9a19cada53be2adbdb6b570ff",
+                    "commit": "3efc11b9aac11156f0d0dff046c4ba4d380a08bf",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/network%2Fneochat/repository/commits",
