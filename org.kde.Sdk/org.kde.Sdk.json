@@ -2011,12 +2011,12 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/frameworks/kio.git",
-                    "tag": "v6.19.0",
+                    "tag": "v6.19.1",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
                     },
-                    "commit": "cb2c6096763e20dae1941ea8e34a8b7e69b20fdd"
+                    "commit": "e0d7f6a17a46506fc7cebf47cb2e8195fea651f0"
                 },
                 {
                     "type": "shell",
