@@ -67,7 +67,7 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/utilities/kcalc.git",
-                    "commit": "3641054dcb7255daa86111798bb73908631303b7",
+                    "commit": "75bd85adc07d1959446795af3bd63b37d6c2582e",
                     "x-checker-data": {
                         "type": "json",
                         "url": "https://invent.kde.org/api/v4/projects/utilities%2Fkcalc/repository/commits",
