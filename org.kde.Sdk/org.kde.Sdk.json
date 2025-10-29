@@ -2164,8 +2164,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/plasma-activities.git",
-                    "tag": "v6.5.0",
-                    "commit": "a40895c60d4f99da96f77f7235d708612ea15417",
+                    "tag": "v6.5.1",
+                    "commit": "a92c2c67e047118b4c8107c5b46c0d7fda76c28f",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -2527,8 +2527,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/kwayland.git",
-                    "tag": "v6.5.0",
-                    "commit": "aec7c3d6dc22ccacb8b024df3b4e49e954ed5aaf",
+                    "tag": "v6.5.1",
+                    "commit": "1878e9aed0779400cb0d46374beb51331e3f587e",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -3059,8 +3059,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/plasma-activities-stats.git",
-                    "tag": "v6.5.0",
-                    "commit": "2527c7854303059dc96a10349be394438261d10d",
+                    "tag": "v6.5.1",
+                    "commit": "639af4eacb959335d989ca61748fcd6ceea62342",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -3114,8 +3114,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/breeze.git",
-                    "tag": "v6.5.0",
-                    "commit": "d1ae5321d2b2fa4d0970216a92cafd5260194a95",
+                    "tag": "v6.5.1",
+                    "commit": "8a7a664371c7994481348b80f4f8e3fa50ff54c9",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -3141,8 +3141,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/plasma-integration.git",
-                    "tag": "v6.5.0",
-                    "commit": "c53713c300e5eb8bc1ae831e3b14a97c0bc62fb8",
+                    "tag": "v6.5.1",
+                    "commit": "721ad86ac6d933b23bae3b4c62c4227ec412ba2c",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -3167,8 +3167,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/qqc2-breeze-style.git",
-                    "tag": "v6.5.0",
-                    "commit": "571200e1e94d5cf5853ee4d1f8cd49a3344ec8e0",
+                    "tag": "v6.5.1",
+                    "commit": "a3dd9285ee44a39fa27244b393b2c02bd35e26db",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
@@ -3189,8 +3189,8 @@
                 {
                     "type": "git",
                     "url": "https://invent.kde.org/plasma/ocean-sound-theme.git",
-                    "tag": "v6.5.0",
-                    "commit": "2f639f63ad8d234487c9cdb65e3fff3688f17849",
+                    "tag": "v6.5.1",
+                    "commit": "de81dbff036af96d561498a94b9bd5693982d66b",
                     "x-checker-data": {
                         "type": "git",
                         "tag-pattern": "^v([\\d.]+)$"
