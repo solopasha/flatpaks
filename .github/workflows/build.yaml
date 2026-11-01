@@ -158,7 +158,7 @@ jobs:
             -v /proc:/host/proc \
             -v "${GITHUB_WORKSPACE}:/work" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               max_retries=5
               sleep_seconds=7
@@ -190,7 +190,7 @@ jobs:
             -v "${GITHUB_WORKSPACE}:/work" \
             -v "${GITHUB_WORKSPACE}/flatpak:/home/builduser/.local/share/flatpak" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
               git config --global --add safe.directory "*"
@@ -219,7 +219,7 @@ jobs:
             -v /proc:/host/proc \
             -v "${GITHUB_WORKSPACE}:/work" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               ccache -d .flatpak-builder/ccache -s
               ccache -d .flatpak-builder/ccache --evict-older-than 1d
@@ -233,7 +233,7 @@ jobs:
             --network=none \
             -v "${GITHUB_WORKSPACE}:/work" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               flatpak build-bundle repo ${{ matrix.app.dirname }}.flatpak \
                 --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
@@ -302,7 +302,7 @@ jobs:
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}:/work" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               ostree init --repo repo --mode=archive-z2
               ostree remote add ${{ github.repository_owner }} \
@@ -351,14 +351,14 @@ jobs:
             -e GPGKEY \
             -v "${GITHUB_WORKSPACE}:/work" \
             -w /work \
-            ghcr.io/solopashachas/flatpaks/buildroot:latest \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
             /bin/bash -c '
               mkdir -p repo/refs/remotes
               echo "${GPGKEY}" | gpg --import
               for bundle in ./*-bundle/*.flatpak; do
-                flatpak build-import-bundle repo "$bundle" --gpg-sign=C88B828E --update-appstream || exit 1
+                flatpak build-import-bundle repo "$bundle" --gpg-sign=dc812d3cb7855746 --update-appstream || exit 1
               done
-              flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=C88B828E
+              flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
             '
 
       - name: Upload repo
@@ -386,7 +386,7 @@ jobs:
 
   merge:
     name: Merge PR
-    if: github.event_name == 'pull_request' && github.actor == 'solopashachas'
+    if: github.event_name == 'pull_request' && github.actor == 'solopasha'
     runs-on: ubuntu-latest
     needs: flatpak
     permissions:
