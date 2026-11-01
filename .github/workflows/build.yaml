@@ -40,7 +40,7 @@ jobs:
       - name: Get changed manifests
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: changed_files
-        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
+        uses: tj-actions/changed-files@e9426d40962ed5378910ee2e21d5f8c6fcbf2dd96
         with:
           files: |
             */*.yml
@@ -248,7 +248,7 @@ jobs:
             '
 
       - name: Upload bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.app.dirname }}-bundle
           path: ${{ matrix.app.dirname }}.flatpak
@@ -257,7 +257,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload debuginfo
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.app.dirname }}.Debug
           path: ${{ matrix.app.dirname }}.Debug.flatpak
@@ -267,7 +267,7 @@ jobs:
 
       - name: Save cache
         id: cache-save
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         if: always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         with:
           path: .flatpak-builder
@@ -285,7 +285,7 @@ jobs:
     steps:
       - name: Cache repo
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: repo
           key: repo-${{ github.run_id }}
@@ -336,7 +336,7 @@ jobs:
       #     echo "$JSON" > repo/index/static
 
       - name: Grab build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: '*-bundle'
 
@@ -362,7 +362,7 @@ jobs:
             '
 
       - name: Upload repo
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: repo/
 
@@ -382,7 +382,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   merge:
     name: Merge PR
