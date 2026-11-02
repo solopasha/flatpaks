@@ -40,7 +40,7 @@ jobs:
       - name: Get changed manifests
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: changed_files
-        uses: tj-actions/changed-files@e9426d40962ed5378910ee2e21d5f8c6fcbf2dd96
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96
         with:
           files: |
             */*.yml
