@@ -280,7 +280,7 @@ jobs:
       contents: read
     concurrency:
       group: repo-update
-      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: Cache repo
@@ -379,7 +379,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     concurrency:
       group: repo-update
-      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages

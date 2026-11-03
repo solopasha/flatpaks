@@ -1,0 +1,66 @@
+name: Delete refs
+
+on:
+  workflow_dispatch:
+    inputs:
+      refs:
+        type: string
+        description: refs to delete
+
+jobs:
+  repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: repo-update
+      queue: max
+    steps:
+      - name: Cache repo
+        id: cache
+        uses: actions/cache@v6
+        with:
+          path: repo
+          key: repo-${{ github.run_id }}
+          restore-keys: repo-
+
+      - name: Delete
+        env:
+          refs: ${{ inputs.refs }}
+          GPGKEY: ${{ secrets.gpgkey }}
+        run: |
+          docker run --rm \
+            --cap-drop all \
+            --entrypoint="" \
+            -e refs \
+            -e GPGKEY \
+            -v "${GITHUB_WORKSPACE}:/work" \
+            -w /work \
+            ghcr.io/solopasha/flatpaks/buildroot:latest \
+            /bin/bash -c '
+              echo "${GPGKEY}" | gpg --import
+              ostree refs --repo=repo --delete ${refs}
+              flatpak build-update-repo --prune repo --gpg-sign=dc812d3cb7855746
+            '
+
+      - name: Upload repo
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: repo/
+
+  deploy:
+    needs: repo
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: repo-update
+      queue: max
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
