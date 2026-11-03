@@ -339,6 +339,8 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: '*-bundle'
+          path: 'import-bundle'
+          merge-multiple: true
 
       - name: Import bundle
         env:
@@ -355,7 +357,7 @@ jobs:
             /bin/bash -c '
               mkdir -p repo/refs/remotes
               echo "${GPGKEY}" | gpg --import
-              for bundle in ./*-bundle/*.flatpak; do
+              for bundle in ./import-bundle/*.flatpak; do
                 flatpak build-import-bundle repo "$bundle" --gpg-sign=dc812d3cb7855746 --update-appstream || exit 1
               done
               flatpak build-update-repo --generate-static-deltas --prune repo --gpg-sign=dc812d3cb7855746
