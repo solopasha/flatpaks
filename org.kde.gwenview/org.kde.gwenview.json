@@ -1,0 +1,170 @@
+{
+    "id": "org.kde.gwenview",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "6.11",
+    "sdk": "org.kde.Sdk",
+    "command": "gwenview",
+    "rename-icon": "gwenview",
+    "finish-args": [
+        "--device=dri",
+        "--filesystem=xdg-cache/thumbnails:rw",
+        "--filesystem=xdg-data/Trash",
+        "--share=ipc",
+        "--socket=cups",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--socket=wayland"
+    ],
+    "cleanup": [
+        "*.a",
+        "*.la",
+        "/include",
+        "/lib/cmake",
+        "/lib/pkgconfig",
+        "/share/man"
+    ],
+    "modules": [
+        {
+            "name": "exiv2",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DEXIV2_ENABLE_NLS=ON",
+                "-DEXIV2_ENABLE_VIDEO=OFF",
+                "-DEXIV2_BUILD_EXIV2_COMMAND=OFF",
+                "-DEXIV2_ENABLE_INIH=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Exiv2/exiv2/archive/refs/tags/v0.28.9.tar.gz",
+                    "sha256": "700b76b97695b2fab4ef8c79619c68ae57d09e0c130724791cafbd39e0eb4aef",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 769,
+                        "stable-only": true,
+                        "url-template": "https://github.com/Exiv2/exiv2/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libraw",
+            "builddir": true,
+            "config-opts": [
+                "--disable-examples",
+                "--disable-static"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.libraw.org/data/LibRaw-0.22.3.tar.gz",
+                    "sha256": "789f3c33466210a1a0907f747a97c715d21bbf4af712f257fcbbd90111b227e4",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 1709,
+                        "stable-only": true,
+                        "url-template": "https://www.libraw.org/data/LibRaw-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "libkdcraw",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_TESTING=OFF",
+                "-DQT_MAJOR_VERSION=6"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/release-service/26.08.3/src/libkdcraw-26.08.3.tar.xz",
+                    "sha256": "835f43299d97afd37a5e03bd48f977bad388553c5cd079fa51b1bda6151e1917",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 8763,
+                        "stable-only": true,
+                        "url-template": "https://download.kde.org/stable/release-service/$version/src/libkdcraw-$version.tar.xz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kColorPicker",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_WITH_QT6=ON",
+                "-DBUILD_SHARED_LIBS=ON"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/ksnip/kColorPicker/archive/refs/tags/v0.3.1.tar.gz",
+                    "sha256": "e78c785ec4a8a22a48a91835c97601f5704b5076b154415353b0d2697dc0b4f7",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 120606,
+                        "stable-only": true,
+                        "url-template": "https://github.com/ksnip/kColorPicker/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "kImageAnnotator",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_WITH_QT6=ON",
+                "-DBUILD_SHARED_LIBS=ON"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v0.7.2.tar.gz",
+                    "sha256": "7eb593d975b1590a184354ef68dbc3c26479d58eaea00de461d73695176f623c",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 120605,
+                        "stable-only": true,
+                        "url-template": "https://github.com/ksnip/kImageAnnotator/archive/refs/tags/v$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "gwenview",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_TESTING=OFF",
+                "-DGWENVIEW_SEMANTICINFO_BACKEND=None",
+                "-DCMAKE_DISABLE_FIND_PACKAGE_CFitsio=ON"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://invent.kde.org/graphics/gwenview.git",
+                    "branch": "master",
+                    "x-checker-data": {
+                        "type": "json",
+                        "url": "https://invent.kde.org/api/v4/projects/graphics%2Fgwenview/repository/commits?ref_name=master&per_page=1",
+                        "commit-query": "first( .[].id )",
+                        "timestamp-query": "first( .[].committed_date )"
+                    }
+                }
+            ],
+            "post-install": [
+                "sed '/Categories=/s/KDE;//' -i ${FLATPAK_DEST}/share/applications/org.kde.gwenview.desktop"
+            ]
+        }
+    ]
+}
