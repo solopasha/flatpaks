@@ -132,17 +132,18 @@ modules:
     config-opts:
       - -Dadplug=disabled
       - -Daudiofile=disabled
+      - -Db_ndebug=true
       - -Ddocumentation=disabled
+      - -Dhtml_manual=false
       - -Dio_uring=disabled
+      - -Dmanpages=false
       - -Dshine=disabled
       - -Dsndio=disabled
       - -Dsystemd=disabled
+      - -Dtest=false
       - -Dtremor=disabled
       - -Dudisks=disabled
-      - -Db_ndebug=true
-      - -Dtest=false
-      - -Dhtml_manual=false
-      - -Dmanpages=false
+      - -Dzeroconf=disabled
     post-install:
       - install -Dpm644 ../mpd.conf -t /app/etc
     sources:
