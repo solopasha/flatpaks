@@ -476,7 +476,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: bb4823e5f0eb92a830242e60dfdcc50d1f2e0410
+        commit: 543a8c2c59b9ea2f80e4992225b80a2b14b91346
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
