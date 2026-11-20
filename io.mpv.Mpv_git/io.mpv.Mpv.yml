@@ -60,7 +60,7 @@ modules:
         mirror-urls:
           - https://luajit.org/git/luajit.git
         disable-shallow-clone: true
-        commit: 63c8f1a9b479ba5518cf6a170ff7729178bc3cfd
+        commit: 96f7b297326e9fd454b7186c6858b2773f94a0dc
         x-checker-data:
           type: json
           url: https://api.github.com/repos/LuaJIT/LuaJIT/branches/v2.1
@@ -394,8 +394,8 @@ modules:
         url: https://github.com/FFmpeg/FFmpeg.git
         mirror-urls:
           - https://git.ffmpeg.org/ffmpeg.git
-        commit: 946fcce07b6dcd0331c8cc609192aeff5e1924f8
-        tag: n9.0.2
+        commit: 74e4393595cf2b5857f0da925c4e0dd74ea306e5
+        tag: n9.1
         x-checker-data:
           type: git
           tag-pattern: ^n([\d.]{3,7})$
@@ -476,7 +476,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: 9c3a0f903d051b48ba24fd5b75648d9ec5238233
+        commit: 94127e1e1aa85734482cb563cfb79cf9b6eb7772
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
