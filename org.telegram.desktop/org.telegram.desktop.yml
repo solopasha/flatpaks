@@ -462,6 +462,7 @@ modules:
       cxxflags: -fpch-preprocess
       env:
         CCACHE_SLOPPINESS: pch_defines,time_macros
+        CARGO_HOME: /run/build/tdesktop/cargo
     config-opts:
       - -DTDESKTOP_API_ID=611335
       - -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c
@@ -478,8 +479,10 @@ modules:
           tag-query: first | .tag_name
           timestamp-query: first | .published_at
           version-query: $tag | sub("^[vV]"; "")
+      - cargo-sources.yml
       - type: patch
         paths:
           - block-sponsored_messages.patch
+          - cargo.patch
     cleanup:
       - /share/icons/hicolor/512x512@2
