@@ -50,6 +50,7 @@ jobs:
             org.kde.Sdk/**
             org.telegram.desktop/*.json
             org.telegram.desktop/tdesktop_rust.yml
+            org.telegram.desktop/cargo-sources.yml
             com.ayugram.desktop/tdesktop_rust.yml
 
       - name: Assemble build matrix
