@@ -30,8 +30,12 @@ output methods are supported.
   </ul>
  </description>
  <releases>
-  <release version="2026.10.26" date="2026-10-26">
+  <release version="2026.11.23" date="2026-11-24">
+   <url type="details">https://github.com/yt-dlp/yt-dlp/releases/tag/2026.11.23</url>
    <description></description>
+  </release>
+  <release version="2026.10.26" date="2026-10-26">
+   <description/>
   </release>
   <release version="2026.10.21" date="2026-10-21">
    <description/>

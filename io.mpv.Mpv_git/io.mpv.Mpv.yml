@@ -476,7 +476,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/mpv-player/mpv.git
-        commit: c47ba38f527c46bbcb603024a547a740c0544b09
+        commit: 35efcf53d59470b3941e61a50c8a3133035a093d
         x-checker-data:
           type: json
           url: https://api.github.com/repos/mpv-player/mpv/branches/master
@@ -563,8 +563,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/yt-dlp/yt-dlp.git
-        tag: 2026.10.26
-        commit: f264a6cbd1f630894da0f368df00f8aae50140e0
+        tag: 2026.11.23
+        commit: 6f73a8d1664a58cdef8c25f01ffb5ab9cf730408
         x-checker-data:
           type: git
           tag-pattern: ^([\d.]+)$
